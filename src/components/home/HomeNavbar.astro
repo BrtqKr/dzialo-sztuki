@@ -1,6 +1,13 @@
 ---
+import navbarLogo from "../../assets/navbar-logo.svg";
 ---
 
-<nav class="flex flex-row py-6 bg-white">
-    
+<nav class="flex flex-row py-6 h-36 pb-8 pl-27 pr-33 justify-between">
+    <img src={navbarLogo.src} alt="Logo" width="139" height="55" />
+    <div class="uppercase gap-x-16 flex flex-row items-end mb-5 text-2xl">
+        <a href="/about">O nas</a>
+        <a href="/offer">Oferta</a>
+        <a href="/actions">Działania</a>
+        <a href="/contact">Kontakt</a>
+    </div>
 </nav>

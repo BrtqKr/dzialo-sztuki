@@ -1,6 +1,81 @@
 ---
+import starRaw from "../../assets/home/star.svg?raw";
 ---
 
-<nav class="flex flex-row py-4">
-    
-</nav>
+<div class="flex flex-row py-4 justify-center">
+    <Fragment set:html={starRaw} />
+</div>
+
+<script>
+  const pupil1 = document.getElementById('pupil1');
+  const pupil2 = document.getElementById('pupil2');
+
+  if (pupil1 && pupil2) {
+    const MAX_MOVE = 15;
+    const LERP = 0.08;
+    const NEAR_INNER = 40;
+    const NEAR_RANGE = 40;
+    const MID_INNER = 50;
+    const MID_RANGE = 100;
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+
+    const off1 = { x: 0, y: 0 };
+    const off2 = { x: 0, y: 0 };
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function lerp(a: number, b: number, t: number) {
+      return a + (b - a) * t;
+    }
+
+    function fade(v: number, inner: number, range: number) {
+      return Math.max(0, Math.min(1, (v - inner) / range));
+    }
+
+    function animate() {
+      if(!pupil1 || !pupil2) return;
+      const r1 = pupil1.getBoundingClientRect();
+      const r2 = pupil2.getBoundingClientRect();
+
+      const rx1 = r1.left + r1.width / 2 - off1.x;
+      const ry1 = r1.top + r1.height / 2 - off1.y;
+      const rx2 = r2.left + r2.width / 2 - off2.x;
+      const ry2 = r2.top + r2.height / 2 - off2.y;
+
+      const midX = (rx1 + rx2) / 2;
+      const midY = (ry1 + ry2) / 2;
+
+      const d1 = Math.hypot(mouseX - rx1, mouseY - ry1);
+      const d2 = Math.hypot(mouseX - rx2, mouseY - ry2);
+      const dMid = Math.hypot(mouseX - midX, mouseY - midY);
+
+      const inf1 = Math.min(fade(d1, NEAR_INNER, NEAR_RANGE), fade(dMid, MID_INNER, MID_RANGE));
+      const inf2 = Math.min(fade(d2, NEAR_INNER, NEAR_RANGE), fade(dMid, MID_INNER, MID_RANGE));
+
+      const a1 = Math.atan2(mouseY - ry1, mouseX - rx1);
+      const a2 = Math.atan2(mouseY - ry2, mouseX - rx2);
+
+      const t1x = Math.cos(a1) * Math.min(d1 * 0.2, MAX_MOVE) * inf1;
+      const t1y = Math.sin(a1) * Math.min(d1 * 0.2, MAX_MOVE) * inf1;
+      const t2x = Math.cos(a2) * Math.min(d2 * 0.2, MAX_MOVE) * inf2;
+      const t2y = Math.sin(a2) * Math.min(d2 * 0.2, MAX_MOVE) * inf2;
+
+      off1.x = lerp(off1.x, t1x, LERP);
+      off1.y = lerp(off1.y, t1y, LERP);
+      off2.x = lerp(off2.x, t2x, LERP);
+      off2.y = lerp(off2.y, t2y, LERP);
+
+      pupil1.style.transform = `translate(${off1.x}px, ${off1.y}px)`;
+      pupil2.style.transform = `translate(${off2.x}px, ${off2.y}px)`;
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  }
+</script>

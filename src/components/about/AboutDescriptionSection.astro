@@ -1,0 +1,77 @@
+---
+import doodle1Raw from "../../assets/about/doodle1.svg?raw";
+import doodle2Raw from "../../assets/about/doodle2.svg?raw";
+import doodle3Raw from "../../assets/about/doodle3.svg?raw";
+import doodle4Raw from "../../assets/about/doodle4.svg?raw";
+
+function svgInner(raw: string) {
+  return raw.replace(/<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+}
+---
+
+<section class="mt-46 flex flex-col text-center items-center text-4xl leading-13">
+    <div class="max-w-[75%] gap-y-14 flex flex-col">
+        <div>
+            Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu <span class="doodle" id="doodle-1">aenean sed diam urna tempor.<svg class="doodle-svg" viewBox="0 0 370 55" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" set:html={svgInner(doodle1Raw)} /></span> Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+        </div>
+        <div>
+            Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu <span class="doodle" id="doodle-2">aenean sed diam urna tempor.<svg class="doodle-svg" viewBox="0 0 293 60" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" set:html={svgInner(doodle2Raw)} /></span> Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+        </div>
+        <div>
+            Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu <span class="doodle" id="doodle-3">aenean sed diam urna tempor.<svg class="doodle-svg" viewBox="0 0 234 25" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" set:html={svgInner(doodle3Raw)} /></span> Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+        </div>
+        <div>
+            Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu <span class="doodle" id="doodle-4">aenean sed diam urna tempor.<svg class="doodle-svg" viewBox="0 0 229 68" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" set:html={svgInner(doodle4Raw)} /></span> Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+        </div>
+    </div>
+</section>
+
+<style>
+  .doodle {
+    position: relative;
+    display: inline-block;
+  }
+
+  .doodle-svg {
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .doodle-svg path {
+    fill: none;
+  }
+</style>
+
+<script>
+  // Set initial hidden state before first paint
+  document.querySelectorAll<SVGPathElement>('.doodle-svg path').forEach(path => {
+    const len = path.getTotalLength();
+    path.style.strokeDasharray = `${len}`;
+    path.style.strokeDashoffset = `${len}`;
+  });
+
+  // After two rAFs the initial state is painted — now safe to add transitions and observe
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.querySelectorAll<SVGPathElement>('.doodle-svg path').forEach(path => {
+      path.style.transition = 'stroke-dashoffset 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    });
+
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.querySelectorAll<SVGPathElement>('.doodle-svg path').forEach(path => {
+            path.style.strokeDashoffset = '0';
+          });
+        }
+      }),
+      { threshold: 0.5 }
+    );
+
+    document.querySelectorAll('.doodle').forEach(el => observer.observe(el));
+  }));
+</script>
