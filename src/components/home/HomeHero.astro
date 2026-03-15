@@ -2,13 +2,13 @@
 import starRaw from "../../assets/home/star.svg?raw";
 ---
 
-<div class="flex flex-row py-4 justify-center">
-    <Fragment set:html={starRaw} />
+<div class="flex flex-row justify-center w-[70%] mx-auto">
+  <Fragment set:html={starRaw} />
 </div>
 
 <script>
-  const pupil1 = document.getElementById('pupil1');
-  const pupil2 = document.getElementById('pupil2');
+  const pupil1 = document.getElementById("pupil1");
+  const pupil2 = document.getElementById("pupil2");
 
   if (pupil1 && pupil2) {
     const MAX_MOVE = 15;
@@ -24,7 +24,7 @@ import starRaw from "../../assets/home/star.svg?raw";
     const off1 = { x: 0, y: 0 };
     const off2 = { x: 0, y: 0 };
 
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener("mousemove", (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
     });
@@ -38,7 +38,7 @@ import starRaw from "../../assets/home/star.svg?raw";
     }
 
     function animate() {
-      if(!pupil1 || !pupil2) return;
+      if (!pupil1 || !pupil2) return;
       const r1 = pupil1.getBoundingClientRect();
       const r2 = pupil2.getBoundingClientRect();
 
@@ -54,8 +54,14 @@ import starRaw from "../../assets/home/star.svg?raw";
       const d2 = Math.hypot(mouseX - rx2, mouseY - ry2);
       const dMid = Math.hypot(mouseX - midX, mouseY - midY);
 
-      const inf1 = Math.min(fade(d1, NEAR_INNER, NEAR_RANGE), fade(dMid, MID_INNER, MID_RANGE));
-      const inf2 = Math.min(fade(d2, NEAR_INNER, NEAR_RANGE), fade(dMid, MID_INNER, MID_RANGE));
+      const inf1 = Math.min(
+        fade(d1, NEAR_INNER, NEAR_RANGE),
+        fade(dMid, MID_INNER, MID_RANGE),
+      );
+      const inf2 = Math.min(
+        fade(d2, NEAR_INNER, NEAR_RANGE),
+        fade(dMid, MID_INNER, MID_RANGE),
+      );
 
       const a1 = Math.atan2(mouseY - ry1, mouseX - rx1);
       const a2 = Math.atan2(mouseY - ry2, mouseX - rx2);
