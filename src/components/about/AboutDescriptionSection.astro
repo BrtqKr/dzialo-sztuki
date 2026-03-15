@@ -4,6 +4,7 @@ import doodle2Raw from "../../assets/about/doodle2.svg?raw";
 import doodle3Raw from "../../assets/about/doodle3.svg?raw";
 import doodle4Raw from "../../assets/about/doodle4.svg?raw";
 import doodle5Raw from "../../assets/about/doodle5.svg?raw";
+import Logo from "../../assets/about/logo.svg";
 
 function svgInner(raw: string) {
   return raw.replace(/<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
@@ -90,6 +91,7 @@ function svgInner(raw: string) {
         /></span
       >ze bedziecie z tego zadowoleni.
     </div>
+    <Logo class="self-end w-3/4 h-auto mt-8" />
   </div>
 </section>
 

@@ -2,20 +2,40 @@
 import navbarLogo from "../assets/navbar-logo2.svg";
 ---
 
+<script>
+  const COLORS = ["#00938A", "#826887", "#F7ADC5", "#F7CB1B", "#205245"];
+
+  document.querySelectorAll<HTMLElement>(".nav-link").forEach((link) => {
+    link.addEventListener("mouseenter", () => {
+      const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      const sign = Math.random() > 0.5 ? 1 : -1;
+      const deg = sign * (Math.random() * 8 + 5);
+      link.style.transform = `rotate(${deg}deg)`;
+      link.style.color = color;
+    });
+    link.addEventListener("mouseleave", () => {
+      link.style.transform = "";
+      link.style.color = "";
+    });
+  });
+</script>
+
 <nav class="flex flex-row h-40.25 px-27 items-center justify-between">
-  <img
-    src={navbarLogo.src}
-    alt="Logo"
-    width="238"
-    height="126"
-    style="flex-shrink:0;aspect-ratio:238/126"
-  />
+  <a href="/">
+    <img
+      src={navbarLogo.src}
+      alt="Logo"
+      width="238"
+      height="126"
+      style="flex-shrink:0;aspect-ratio:238/126"
+    />
+  </a>
   <div
     class="flex flex-row gap-x-16 uppercase text-xl font-[Michroma] items-end mb-9 h-full"
   >
-    <a href="/about" class="text-nowrap">O nas</a>
-    <a href="/offer" class="text-nowrap">Oferta</a>
-    <a href="/actions" class="text-nowrap">Dzialania</a>
-    <a href="/contact" class="text-nowrap">Kontakt</a>
+    <a href="/about" class="nav-link text-nowrap">O nas</a>
+    <a href="/offer" class="nav-link text-nowrap">Oferta</a>
+    <a href="/actions" class="nav-link text-nowrap">Dzialania</a>
+    <a href="/contact" class="nav-link text-nowrap">Kontakt</a>
   </div>
 </nav>

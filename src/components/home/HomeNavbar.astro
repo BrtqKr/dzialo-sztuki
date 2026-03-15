@@ -2,20 +2,38 @@
 import navbarLogo from "../../assets/navbar-logo.svg";
 ---
 
+<script>
+  const COLORS = ["#00938A", "#826887", "#F7ADC5", "#F7CB1B", "#205245"];
+
+  document.querySelectorAll<HTMLElement>(".nav-link").forEach((link) => {
+    link.addEventListener("mouseenter", () => {
+      const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      const sign = Math.random() > 0.5 ? 1 : -1;
+      const deg = sign * (Math.random() * 8 + 5);
+      link.style.transform = `rotate(${deg}deg)`;
+      link.style.color = color;
+    });
+    link.addEventListener("mouseleave", () => {
+      link.style.transform = "";
+      link.style.color = "";
+    });
+  });
+</script>
+
 <nav class="flex flex-row py-6 h-36 pb-8 mx-auto items-center mb-5">
   <div
     class="flex flex-row gap-x-16 uppercase text-[2.5rem] font-[CuteFont] flex-1 justify-end"
   >
-    <a href="/about" class="text-nowrap">O nas</a>
-    <a href="/offer" class="text-nowrap">Oferta</a>
+    <a href="/about" class="nav-link text-nowrap">O nas</a>
+    <a href="/offer" class="nav-link text-nowrap">Oferta</a>
   </div>
   <div class="flex justify-center flex-1 mx-44 min-w-[139]">
-    <img src={navbarLogo.src} alt="Logo" width="139" height="55" />
+    <a href="/"><img src={navbarLogo.src} alt="Logo" width="139" height="55" /></a>
   </div>
   <div
     class="flex flex-row gap-x-16 uppercase text-[2.5rem] font-[CuteFont] flex-1 justify-start"
   >
-    <a href="/actions" class="text-nowrap">Dzialania</a>
-    <a href="/contact" class="text-nowrap">Kontakt</a>
+    <a href="/actions" class="nav-link text-nowrap">Dzialania</a>
+    <a href="/contact" class="nav-link text-nowrap">Kontakt</a>
   </div>
 </nav>

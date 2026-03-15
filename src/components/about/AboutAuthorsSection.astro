@@ -1,0 +1,126 @@
+---
+import author1 from "../../assets/about/authors/author1.png";
+---
+
+<div style="clip-path: inset(0 -100vw -100vh 0)">
+  <section id="authors-section" class="py-24 w-full">
+    <div class="flex flex-row items-center justify-center w-full">
+      <div id="author1-img" class="flex-shrink-0">
+        <img src={author1.src} alt="Author" class="max-w-[300px]" />
+      </div>
+
+      <div class="relative flex-shrink-0 w-[480px] -ml-22">
+        <div
+          id="author1-text"
+          class="relative z-10 pr-10 py-10 font-[Michroma] text-base leading-7"
+        >
+          <div class="shape-left"></div>
+          <p>Linia pierwsza tekstu o autorze</p>
+          <p>Linia druga tekstu o autorze</p>
+          <p>Linia trzecia tekstu o autorze</p>
+          <p>Linia czwarta tekstu o autorze</p>
+          <p>Linia piata tekstu o autorze</p>
+          <p>Linia szosta tekstu o autorze</p>
+        </div>
+        <div
+          id="author1-container"
+          class="absolute inset-0 pointer-events-none"
+        >
+          <svg
+            viewBox="0 0 465 340"
+            preserveAspectRatio="none"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-full h-full"
+          >
+            <path
+              d="M1.03711 104.392L8.08606 1H463.037V339H95.0231L8.08606 191.088L65.0651 146.568L1.03711 104.392Z"
+              stroke="#00938A"
+              stroke-width="2"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+  /*
+    Shape mirrors the SVG container's left boundary.
+    SVG path left edge key points (scaled to 480px wide, ~248px tall container):
+      top      x≈8px
+      y=36px   x≈1px  (outer notch)
+      y=67px   x≈67px (notch peak, indents into container)
+      y=99px   x≈8px  (notch exit)
+      y=208px  x≈98px (bottom-left corner)
+    +12px breathing room added to each x.
+  */
+  .shape-left {
+    float: left;
+    width: 112px;
+    height: 230px;
+    shape-outside: polygon(
+      0px 0px,
+      10px 0px,
+      10px 36px,
+      4px 36px,
+      72px 67px,
+      10px 99px,
+      100px 230px,
+      0px 230px
+    );
+  }
+</style>
+
+<script>
+  const section = document.getElementById("authors-section")!;
+  const authorEl = document.getElementById("author1-img") as HTMLElement;
+  const textEl = document.getElementById("author1-text") as HTMLElement;
+  const containerEl = document.getElementById(
+    "author1-container",
+  ) as HTMLElement;
+
+  const OFFSET = 280;
+  const TEXT_LAG = 0.10;
+  const CONTAINER_LAG = 0.06;
+
+  let textX = OFFSET;
+  let containerX = OFFSET + 200;
+
+  function lerp(a: number, b: number, t: number) {
+    return a + (b - a) * t;
+  }
+
+  function getProgress() {
+    const rect = section.getBoundingClientRect();
+    const start = window.innerHeight * 0.95;
+    const end = window.innerHeight * 0.25;
+    return Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
+  }
+
+  function easeOut(t: number) {
+    return 1 - Math.pow(1 - t, 3);
+  }
+
+  function animate() {
+    const progress = easeOut(getProgress());
+    const targetAuthorX = lerp(-OFFSET, 0, progress);
+    const targetTextX = lerp(OFFSET, 0, progress);
+
+    textX = lerp(textX, targetTextX, TEXT_LAG);
+    containerX = lerp(containerX, textX, CONTAINER_LAG);
+
+    authorEl.style.transform = `translateX(${targetAuthorX}px)`;
+    textEl.style.transform = `translateX(${textX}px)`;
+    containerEl.style.transform = `translateX(${containerX}px)`;
+
+    requestAnimationFrame(animate);
+  }
+
+  // Init container at start offset so it doesn't flash
+  containerEl.style.transform = `translateX(${OFFSET + 200}px)`;
+  authorEl.style.transform = `translateX(${-OFFSET}px)`;
+  textEl.style.transform = `translateX(${textX}px)`;
+
+  requestAnimationFrame(animate);
+</script>
