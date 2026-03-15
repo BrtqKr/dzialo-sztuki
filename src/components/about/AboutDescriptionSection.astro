@@ -3,27 +3,92 @@ import doodle1Raw from "../../assets/about/doodle1.svg?raw";
 import doodle2Raw from "../../assets/about/doodle2.svg?raw";
 import doodle3Raw from "../../assets/about/doodle3.svg?raw";
 import doodle4Raw from "../../assets/about/doodle4.svg?raw";
+import doodle5Raw from "../../assets/about/doodle5.svg?raw";
 
 function svgInner(raw: string) {
-  return raw.replace(/<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+  return raw.replace(/<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
 }
 ---
 
-<section class="mt-46 flex flex-col text-center items-center text-4xl leading-13">
-    <div class="max-w-[75%] gap-y-14 flex flex-col">
-        <div>
-            Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu <span class="doodle" id="doodle-1">aenean sed diam urna tempor.<svg class="doodle-svg" viewBox="0 0 370 55" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" set:html={svgInner(doodle1Raw)} /></span> Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-        </div>
-        <div>
-            Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu <span class="doodle" id="doodle-2">aenean sed diam urna tempor.<svg class="doodle-svg" viewBox="0 0 293 60" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" set:html={svgInner(doodle2Raw)} /></span> Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-        </div>
-        <div>
-            Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu <span class="doodle" id="doodle-3">aenean sed diam urna tempor.<svg class="doodle-svg" viewBox="0 0 234 25" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" set:html={svgInner(doodle3Raw)} /></span> Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-        </div>
-        <div>
-            Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu <span class="doodle" id="doodle-4">aenean sed diam urna tempor.<svg class="doodle-svg" viewBox="0 0 229 68" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" set:html={svgInner(doodle4Raw)} /></span> Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-        </div>
+<section
+  class="mt-26 flex flex-col text-center items-center text-4xl leading-13"
+>
+  <div class="max-w-[75%] gap-y-14 flex flex-col font-[Michroma] text-2xl">
+    <div>
+      <span class="doodle" id="doodle-1"
+        >Szt<svg
+          class="doodle-svg doodle-around"
+          viewBox="0 0 93 51"
+          preserveAspectRatio="none"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          set:html={svgInner(doodle1Raw)}
+        /></span
+      >uka to opowiadanie, pytanie, rozmawianie, proponowanie, podkreslanie,
+      odczuwanie, zastanawianie sie, dawanie, zapominanie, zgadzanie sie i
+      sprzeciwianie, watpienie, dyskutowanie, stwierdzanie, przyznawanie sie,
+      tlumaczenie, przedstawianie, dzialanie (...).
     </div>
+    <div>Brzmi bardzo ludzko, prawda?</div>
+    <div>
+      Sposrod nieskonczonego zbioru czynnosci, jakie wykonuje sztuka, my
+      wybralysmy towarzyszenie - towarzyszenie w procesie, w my<span
+        class="doodle"
+        id="doodle-2"
+        >sli, w odkrywaniu, ogladaniu i kreowa<svg
+          class="doodle-svg doodle-around"
+          viewBox="0 0 524 40"
+          preserveAspectRatio="none"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          set:html={svgInner(doodle2Raw)}
+        /></span
+      >niu. Towarzyszenie sztuce i jej odbiorcom - Wam.
+    </div>
+    <div>
+      Ta ludzko <span class="doodle" id="doodle-3"
+        >brzmiaca Sztuka wygla<svg
+          class="doodle-svg doodle-around"
+          viewBox="0 0 333 68"
+          preserveAspectRatio="none"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          set:html={svgInner(doodle3Raw)}
+        /></span
+      >da bardzo roznie, roznie sie ubiera i - jak juz wiemy - robi bardzo rozne
+      rzeczy. Przebiera sie za rzezby, obrazy, grafiki, fotografie, a nie zawsze
+      mieszka w galerii. Czesto okazuje sie, ze jest blizej, niz nam sie wydaje.
+      My chcemy towarzyszyc w jej dostrze<span class="doodle" id="doodle-4"
+        >ganiu, w szukaniu jej w miej<svg
+          class="doodle-svg doodle-underline"
+          viewBox="0 0 321 25"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          set:html={svgInner(doodle4Raw)}
+        /></span
+      >scach nieoczywistych, ale tez zabierac ja do miejsc, ktorych dawno nie
+      odwiedzala.
+    </div>
+    <div>
+      Moze zupelnie przypadkiem okaze sie, ze ta Sztuka mieszka u Ciebie? Moze
+      okaze sie, ze Sztuka to chec, ktora masz, albo swietna mysl, ktora wlasnie
+      wpada Ci do glowy.
+    </div>
+    <div>
+      My jestesmy pewne, ze Sztuka wpada do nas praktycznie codziennie na kawe. Potem czesto
+      zostaje do kolacji i wyjada nam cala lodowke - ale nie jestesmy na nia
+      zle. Wiemy, ze to swietna kobieta i chcemy przyjsc z nia do Was, zeby
+      wyjadla Wasze konfitury, bo jes<span class="doodle" id="doodle-5"
+        >tesmy przekonane, <svg
+          class="doodle-svg doodle-underline"
+          viewBox="0 0 252 39"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          set:html={svgInner(doodle5Raw)}
+        /></span
+      >ze bedziecie z tego zadowoleni.
+    </div>
+  </div>
 </section>
 
 <style>
@@ -34,44 +99,87 @@ function svgInner(raw: string) {
 
   .doodle-svg {
     position: absolute;
-    left: 0;
-    bottom: -4px;
-    width: 100%;
-    height: auto;
     overflow: visible;
     pointer-events: none;
   }
 
+  /* Doodles 1-3: circle/enclose the text */
+  .doodle-around {
+    top: -0.15em;
+    left: -0.25em;
+    right: -0.25em;
+    bottom: -0.15em;
+    width: auto;
+    height: auto;
+  }
+
+  #doodle-3 .doodle-around {
+    top: -0.25em;
+    bottom: -0.05em;
+  }
+
+  /* Doodles 4-5: underline below the text */
+  .doodle-underline {
+    left: 5%;
+    top: calc(100% + 0.05em);
+    width: 90%;
+    height: auto;
+  }
+
+  #doodle-4 .doodle-underline {
+    width: 75%;
+    left: 12%;
+  }
+
+  #doodle-5 .doodle-underline {
+    width: 70%;
+    left: 18%;
+  }
+
   .doodle-svg path {
     fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 </style>
 
 <script>
   // Set initial hidden state before first paint
-  document.querySelectorAll<SVGPathElement>('.doodle-svg path').forEach(path => {
-    const len = path.getTotalLength();
-    path.style.strokeDasharray = `${len}`;
-    path.style.strokeDashoffset = `${len}`;
-  });
-
-  // After two rAFs the initial state is painted — now safe to add transitions and observe
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    document.querySelectorAll<SVGPathElement>('.doodle-svg path').forEach(path => {
-      path.style.transition = 'stroke-dashoffset 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+  document
+    .querySelectorAll<SVGPathElement>(".doodle-svg path")
+    .forEach((path) => {
+      const len = path.getTotalLength();
+      path.style.strokeDasharray = `${len}`;
+      path.style.strokeDashoffset = `${len}`;
     });
 
-    const observer = new IntersectionObserver(
-      (entries) => entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.querySelectorAll<SVGPathElement>('.doodle-svg path').forEach(path => {
-            path.style.strokeDashoffset = '0';
-          });
-        }
-      }),
-      { threshold: 0.5 }
-    );
+  // After two rAFs the initial state is painted — now safe to add transitions and observe
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => {
+      document
+        .querySelectorAll<SVGPathElement>(".doodle-svg path")
+        .forEach((path) => {
+          path.style.transition =
+            "stroke-dashoffset 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+        });
 
-    document.querySelectorAll('.doodle').forEach(el => observer.observe(el));
-  }));
+      const observer = new IntersectionObserver(
+        (entries) =>
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target
+                .querySelectorAll<SVGPathElement>(".doodle-svg path")
+                .forEach((path) => {
+                  path.style.strokeDashoffset = "0";
+                });
+            }
+          }),
+        { threshold: 0.5 },
+      );
+
+      document
+        .querySelectorAll(".doodle")
+        .forEach((el) => observer.observe(el));
+    }),
+  );
 </script>
