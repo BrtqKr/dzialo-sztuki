@@ -13,7 +13,7 @@ function svgInner(raw: string) {
 <section
   class="mt-26 flex flex-col text-center items-center text-4xl leading-13"
 >
-  <div class="max-w-[75%] gap-y-14 flex flex-col font-[Michroma] text-2xl">
+  <div class="max-w-[75%] gap-y-9 flex flex-col font-[Michroma] text-2xl">
     <div>
       <span class="doodle" id="doodle-1"
         >Szt<svg
@@ -175,20 +175,27 @@ function svgInner(raw: string) {
         if (rect.top < start && !scrolledDown && window.scrollY === 0) {
           // Visible on page load — mark as fully drawn
           activated.add(el);
-          el.querySelectorAll<SVGPathElement>(".doodle-svg path").forEach((path) => {
-            path.style.strokeDashoffset = "0";
-          });
+          el.querySelectorAll<SVGPathElement>(".doodle-svg path").forEach(
+            (path) => {
+              path.style.strokeDashoffset = "0";
+            },
+          );
           return;
         }
         activated.add(el);
       }
 
-      const progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
+      const progress = Math.min(
+        1,
+        Math.max(0, (start - rect.top) / (start - end)),
+      );
 
-      el.querySelectorAll<SVGPathElement>(".doodle-svg path").forEach((path) => {
-        const len = path.getTotalLength();
-        path.style.strokeDashoffset = `${len * (1 - progress)}`;
-      });
+      el.querySelectorAll<SVGPathElement>(".doodle-svg path").forEach(
+        (path) => {
+          const len = path.getTotalLength();
+          path.style.strokeDashoffset = `${len * (1 - progress)}`;
+        },
+      );
     });
     requestAnimationFrame(updateDoodles);
   }

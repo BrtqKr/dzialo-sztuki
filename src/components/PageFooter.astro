@@ -1,22 +1,43 @@
 ---
-import FooterEyes from "../assets/footer-eyes.svg";
+import Arrow from "../assets/arrow.svg";
 import Instagram from "../assets/instagram.svg";
-import Linkedin from "../assets/linkedin.svg"
-import X from "../assets/x.svg"
+import Linkedin from "../assets/linkedin.svg";
+import Facebook from "../assets/facebook.svg";
+import FooterStar from "../assets/footer-star.svg";
 ---
 
-<footer class="flex flex-row h-56 px-16 pb-16 mt-16 justify-between">
-    <div class="bg-black w-full pl-14 pr-9 flex flex-row justify-between items-center">
-        <div class="flex flex-col">
-            <div class="text-[#F7CB1B] text-3xl leading-12 flex flex-col h-full justify-center">
-                Zaobserwuj nas <br/>@dzialosztuki
-            </div>
-            <div class="flex flex-row gap-x-6 mt-5">
-                <Instagram />
-                <Linkedin />
-                <X />
-            </div>
-        </div>
-        <FooterEyes class="mt-2"  />
+<div>
+  <footer class="flex flex-row font-[Michroma] bg-black mt-30">
+    <div class="flex-1 text-white p-8 flex flex-col justify-center">
+      <div class="text-sm leading-5">
+        <p>Logotyp</p>
+        <p class="flex items-center gap-x-2">
+          &copy; 2026 Działo Sztuki &amp; Julian Achilles Pawlak<Arrow />
+        </p>
+        <p>Strona internetowa</p>
+        <p class="flex items-center gap-x-2">
+          &copy; 2026 Działo Sztuki &amp; Ziomale<Arrow />
+        </p>
+      </div>
+      <div
+        class="border-t border-white mt-4 pt-4 flex flex-row gap-x-8 text-sm -ml-8 pl-8 w-fit pr-[18px]"
+      >
+        <a href="/accessibility">deklaracja dostępności</a>
+        <a href="/privacy">polityka prywatności</a>
+      </div>
     </div>
-</footer>
+    <div class="relative text-white p-8 flex flex-col gap-y-4">
+      <FooterStar class="absolute bottom-full left-1/2 -translate-x-1/2" />
+      <div>Zaobserwuj nas<br />@dzialosztuki</div>
+      <div class="flex flex-row gap-x-4">
+        <Instagram />
+        <Facebook />
+        <Linkedin />
+      </div>
+    </div>
+    <div class="text-white p-8 text-sm leading-5 flex items-center">
+      Fundacja Działo Sztuki<br />Piotrkowska 276A,<br />90-361 Łódź<br />NIP
+      7292767283<br />KRS 0001213889<br />
+    </div>
+  </footer>
+</div>
