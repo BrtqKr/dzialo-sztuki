@@ -1,82 +1,83 @@
 ---
 import author1 from "../../assets/about/authors/author1.png";
 import author2 from "../../assets/about/authors/author2.png";
-import mask2 from "../../assets/about/authors/mask2.svg?raw";
 ---
 
 <div style="clip-path: inset(0 -100vw -100vh 0)">
-  <section id="authors-section" class="pt-24 pb-0 w-full">
-    <div class="flex flex-row items-center justify-center w-full">
-      <div id="author1-img" class="flex-shrink-0">
-        <img src={author1.src} alt="Author" class="max-w-[420px]" />
+  <section id="authors-section" class="py-24 w-full">
+    <div class="flex flex-col items-center gap-y-16 w-full">
+      <!-- Author 1 -->
+      <div class="flex flex-row items-center justify-center w-full">
+        <div id="author1-img" class="flex-shrink-0">
+          <img src={author1.src} alt="Author" class="max-w-[420px]" />
+        </div>
+
+        <div class="relative flex-shrink-0 -ml-22">
+          <div id="author1-container" class="pointer-events-none">
+            <svg
+              viewBox="0 0 465 340"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-[520px] h-auto block"
+            >
+              <path
+                d="M1.03711 104.392L8.08606 1H463.037V339H95.0231L8.08606 191.088L65.0651 146.568L1.03711 104.392Z"
+                stroke="#00938A"
+                stroke-width="2"></path>
+            </svg>
+          </div>
+          <div
+            id="author1-text"
+            class="absolute inset-0 z-10 pr-10 py-10 font-[Michroma] text-base leading-7"
+          >
+            <div class="shape-left"></div>
+            <p>Linia pierwsza tekstu o autorze</p>
+            <p>Linia druga tekstu o autorze</p>
+            <p>Linia trzecia tekstu o autorze</p>
+            <p>Linia czwarta tekstu o autorze</p>
+            <p>Linia piata tekstu o autorze</p>
+            <p>Linia szosta tekstu o autorze</p>
+          </div>
+        </div>
       </div>
 
-      <div class="relative flex-shrink-0 -ml-22">
-        <div id="author1-container" class="pointer-events-none">
-          <svg
-            viewBox="0 0 465 340"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-[520px] h-auto block"
-          >
-            <path
-              d="M1.03711 104.392L8.08606 1H463.037V339H95.0231L8.08606 191.088L65.0651 146.568L1.03711 104.392Z"
-              stroke="#00938A"
-              stroke-width="2"></path>
-          </svg>
+      <!-- Author 2 -->
+      <div
+        id="author2-section"
+        class="flex flex-row items-center justify-end w-full pr-24 gap-x-16"
+      >
+        <div class="flex flex-col gap-y-3 font-[Michroma] text-right">
+          <p id="author2-name" class="text-3xl">Imię Nazwisko</p>
+          <p id="author2-title" class="text-lg text-[#00938A]">Tytuł / Rola</p>
         </div>
-        <div
-          id="author1-text"
-          class="absolute inset-0 z-10 pr-10 py-10 font-[Michroma] text-base leading-7"
-        >
-          <div class="shape-left"></div>
-          <p>Linia pierwsza tekstu o autorze</p>
-          <p>Linia druga tekstu o autorze</p>
-          <p>Linia trzecia tekstu o autorze</p>
-          <p>Linia czwarta tekstu o autorze</p>
-          <p>Linia piata tekstu o autorze</p>
-          <p>Linia szosta tekstu o autorze</p>
+
+        <div class="flex-shrink-0 relative" style="width: 400px;">
+          <svg
+            width="0"
+            height="0"
+            style="position:absolute"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <clipPath id="mask2-clip" clipPathUnits="objectBoundingBox">
+                <path
+                  transform="scale(0.002525252525, 0.001872659176)"
+                  d="M184.489 0L131.379 184.268L0 163.793L109.016 294.577L26.5553 331.347L157.934 406.977L250.179 534L285.12 381.07L396 416.169L367.115 248.615L396 119.92L264.621 184.268L184.489 0Z"
+                ></path>
+              </clipPath>
+            </defs>
+          </svg>
+          <img
+            src={author2.src}
+            alt="Author 2"
+            class="w-full h-auto block"
+            style="clip-path: url(#mask2-clip);"
+          />
         </div>
       </div>
     </div>
   </section>
 </div>
-
-<!-- Author 2 -->
-<section id="author2-section" class="pt-0 pb-24 w-full overflow-hidden">
-  <div class="flex flex-row items-center justify-end pr-24 w-full gap-x-16">
-    <!-- Name + title slide in from the left -->
-    <div class="flex flex-col gap-y-3 font-[Michroma] text-right">
-      <p id="author2-name" class="text-3xl">Imię Nazwisko</p>
-      <p id="author2-title" class="text-lg text-[#00938A]">Tytuł / Rola</p>
-    </div>
-
-    <!-- Author photo with mask -->
-    <div class="flex-shrink-0 relative" style="width: 400px;">
-      <svg
-        width="0"
-        height="0"
-        style="position:absolute"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <clipPath id="mask2-clip" clipPathUnits="objectBoundingBox">
-            <path
-              transform="scale(0.002525252525, 0.001872659176)"
-              d="M184.489 0L131.379 184.268L0 163.793L109.016 294.577L26.5553 331.347L157.934 406.977L250.179 534L285.12 381.07L396 416.169L367.115 248.615L396 119.92L264.621 184.268L184.489 0Z"
-            ></path>
-          </clipPath>
-        </defs>
-      </svg>
-      <img
-        src={author2.src}
-        alt="Author 2"
-        class="w-full h-auto block"
-        style="clip-path: url(#mask2-clip);"
-      />
-    </div>
-  </div>
-</section>
 
 <style>
   .shape-left {
@@ -151,7 +152,6 @@ import mask2 from "../../assets/about/authors/mask2.svg?raw";
   // ── Author 2 animation ──────────────────────────────────────────
   const author2Section = document.getElementById("author2-section")!;
   const nameEl = document.getElementById("author2-name") as HTMLElement;
-  const titleEl = document.getElementById("author2-title") as HTMLElement;
 
   const SLIDE_OFFSET = 120;
   const NAME_LAG = 0.1;
