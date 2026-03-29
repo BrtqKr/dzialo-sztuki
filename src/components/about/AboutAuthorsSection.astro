@@ -5,11 +5,11 @@ import author2 from "../../assets/about/authors/author2.png";
 
 <div style="clip-path: inset(0 -100vw -100vh 0)">
   <section id="authors-section" class="py-24 w-full">
-    <div class="flex flex-col items-center gap-y-16 w-full">
+    <div class="flex flex-col items-center w-full">
       <!-- Author 1 -->
       <div class="flex flex-row items-center justify-center w-full">
         <div id="author1-img" class="flex-shrink-0">
-          <img src={author1.src} alt="Author" class="max-w-[420px]" />
+          <img src={author1.src} alt="Author" class="max-w-[500px]" />
         </div>
 
         <div class="relative flex-shrink-0 -ml-22">
@@ -18,7 +18,7 @@ import author2 from "../../assets/about/authors/author2.png";
               viewBox="0 0 465 340"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              class="w-[520px] h-auto block"
+              class="w-[620px] h-auto block"
             >
               <path
                 d="M1.03711 104.392L8.08606 1H463.037V339H95.0231L8.08606 191.088L65.0651 146.568L1.03711 104.392Z"
@@ -42,16 +42,12 @@ import author2 from "../../assets/about/authors/author2.png";
       </div>
 
       <!-- Author 2 -->
-      <div
-        id="author2-section"
-        class="flex flex-row items-center justify-end w-full pr-24 gap-x-16"
-      >
-        <div class="flex flex-col gap-y-3 font-[Michroma] text-right">
-          <p id="author2-name" class="text-3xl">Imię Nazwisko</p>
-          <p id="author2-title" class="text-lg text-[#00938A]">Tytuł / Rola</p>
-        </div>
-
-        <div class="flex-shrink-0 relative" style="width: 400px;">
+      <div class="flex flex-row justify-end w-full pr-16 -mt-32">
+        <div
+          id="author2-section"
+          class="relative shrink-0"
+          style="width: 520px; aspect-ratio: 396/534;"
+        >
           <svg
             width="0"
             height="0"
@@ -70,9 +66,18 @@ import author2 from "../../assets/about/authors/author2.png";
           <img
             src={author2.src}
             alt="Author 2"
-            class="w-full h-auto block"
+            class="w-full h-full object-cover block"
             style="clip-path: url(#mask2-clip);"
           />
+          <!-- Text overlay: top-right -->
+          <div class="absolute top-24 -left-14 z-10 font-[Michroma] p-8">
+            <p id="author2-name" class="text-2xl leading-tight">
+              Imię Nazwisko
+            </p>
+            <p id="author2-title" class="text-base text-[#00938A] mt-2">
+              Tytuł / Rola
+            </p>
+          </div>
         </div>
       </div>
     </div>
