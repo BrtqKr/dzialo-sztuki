@@ -1,183 +1,147 @@
 ---
-import author1 from "../../assets/about/authors/author1.png";
-import author2 from "../../assets/about/authors/author2.png";
+import mask1 from "../../assets/about/authors/mask1.svg";
+import mask2 from "../../assets/about/authors/mask2.svg";
+import mask3 from "../../assets/about/authors/mask3.svg";
+import mask4 from "../../assets/about/authors/mask4.svg";
+
+const authors = [
+  {
+    mask: mask1.src,
+    maskW: 551, maskH: 552,
+    name: "Imię Nazwisko",
+    title: "Tytuł / Rola",
+    desc: "Linia pierwsza tekstu o autorze. Linia druga tekstu o autorze. Linia trzecia tekstu o autorze. Linia czwarta tekstu o autorze.",
+  },
+  {
+    mask: mask2.src,
+    maskW: 420, maskH: 520,
+    name: "Imię Nazwisko",
+    title: "Tytuł / Rola",
+    desc: "Linia pierwsza tekstu o autorze. Linia druga tekstu o autorze. Linia trzecia tekstu o autorze. Linia czwarta tekstu o autorze.",
+  },
+  {
+    mask: mask3.src,
+    maskW: 551, maskH: 552,
+    name: "Imię Nazwisko",
+    title: "Tytuł / Rola",
+    desc: "Linia pierwsza tekstu o autorze. Linia druga tekstu o autorze. Linia trzecia tekstu o autorze. Linia czwarta tekstu o autorze.",
+  },
+  {
+    mask: mask4.src,
+    maskW: 551, maskH: 552,
+    name: "Imię Nazwisko",
+    title: "Tytuł / Rola",
+    desc: "Linia pierwsza tekstu o autorze. Linia druga tekstu o autorze. Linia trzecia tekstu o autorze. Linia czwarta tekstu o autorze.",
+  },
+];
 ---
 
 <div style="clip-path: inset(0 -100vw -100vh 0)">
   <section id="authors-section" class="py-24 w-full">
-    <div class="flex flex-col items-center w-full">
-      <!-- Author 1 -->
-      <div class="flex flex-row items-center justify-center w-full">
-        <div id="author1-img" class="flex-shrink-0">
-          <img src={author1.src} alt="Author" class="max-w-[500px]" />
-        </div>
+    <div class="flex flex-col w-full">
 
-        <div class="relative flex-shrink-0 -ml-22">
-          <div id="author1-container" class="pointer-events-none">
-            <svg
-              viewBox="0 0 465 340"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-[620px] h-auto block"
-            >
-              <path
-                d="M1.03711 104.392L8.08606 1H463.037V339H95.0231L8.08606 191.088L65.0651 146.568L1.03711 104.392Z"
-                stroke="#00938A"
-                stroke-width="2"></path>
-            </svg>
-          </div>
+      {authors.map((author, i) => {
+        const photoLeft = i % 2 === 0;
+        return (
           <div
-            id="author1-text"
-            class="absolute inset-0 z-10 pr-10 py-10 font-[Michroma] text-base leading-7"
+            class={`flex flex-row items-center w-full ${photoLeft ? "justify-start pl-16" : "justify-end pr-16"} -mt-16 first:mt-0`}
+            data-author-index={i}
           >
-            <div class="shape-left"></div>
-            <p>Linia pierwsza tekstu o autorze</p>
-            <p>Linia druga tekstu o autorze</p>
-            <p>Linia trzecia tekstu o autorze</p>
-            <p>Linia czwarta tekstu o autorze</p>
-            <p>Linia piata tekstu o autorze</p>
-            <p>Linia szosta tekstu o autorze</p>
+            {photoLeft ? (
+              <>
+                <img
+                  class="author-photo shrink-0 block"
+                  src={author.mask}
+                  alt={author.name}
+                  width={author.maskW * 0.75}
+                  height={author.maskH * 0.75}
+                  style="object-fit:contain;"
+                />
+                <div class="author-text font-[Michroma] pl-16 max-w-sm">
+                  <p class="text-2xl leading-tight">{author.name}</p>
+                  <p class="text-base text-[#00938A] mt-2">{author.title}</p>
+                  <p class="text-sm leading-7 mt-4">{author.desc}</p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div class="author-text font-[Michroma] pr-16 max-w-sm text-right">
+                  <p class="text-2xl leading-tight">{author.name}</p>
+                  <p class="text-base text-[#00938A] mt-2">{author.title}</p>
+                  <p class="text-sm leading-7 mt-4">{author.desc}</p>
+                </div>
+                <img
+                  class="author-photo shrink-0 block"
+                  src={author.mask}
+                  alt={author.name}
+                  width={author.maskW * 0.75}
+                  height={author.maskH * 0.75}
+                  style="object-fit:contain;"
+                />
+              </>
+            )}
           </div>
-        </div>
-      </div>
+        );
+      })}
 
-      <!-- Author 2 -->
-      <div class="flex flex-row justify-end w-full pr-16 -mt-32">
-        <div
-          id="author2-section"
-          class="relative shrink-0"
-          style="width: 520px; aspect-ratio: 396/534;"
-        >
-          <svg
-            width="0"
-            height="0"
-            style="position:absolute"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <defs>
-              <clipPath id="mask2-clip" clipPathUnits="objectBoundingBox">
-                <path
-                  transform="scale(0.002525252525, 0.001872659176)"
-                  d="M184.489 0L131.379 184.268L0 163.793L109.016 294.577L26.5553 331.347L157.934 406.977L250.179 534L285.12 381.07L396 416.169L367.115 248.615L396 119.92L264.621 184.268L184.489 0Z"
-                ></path>
-              </clipPath>
-            </defs>
-          </svg>
-          <img
-            src={author2.src}
-            alt="Author 2"
-            class="w-full h-full object-cover block"
-            style="clip-path: url(#mask2-clip);"
-          />
-          <!-- Text overlay: top-right -->
-          <div class="absolute top-24 -left-14 z-10 font-[Michroma] p-8">
-            <p id="author2-name" class="text-2xl leading-tight">
-              Imię Nazwisko
-            </p>
-            <p id="author2-title" class="text-base text-[#00938A] mt-2">
-              Tytuł / Rola
-            </p>
-          </div>
-        </div>
-      </div>
     </div>
   </section>
 </div>
 
-<style>
-  .shape-left {
-    float: left;
-    width: 112px;
-    height: 230px;
-    shape-outside: polygon(
-      0px 0px,
-      30px 0px,
-      30px 36px,
-      20px 36px,
-      95px 67px,
-      30px 99px,
-      120px 230px,
-      0px 230px
-    );
-  }
-</style>
-
 <script>
-  // ── Author 1 animation ──────────────────────────────────────────
-  const section = document.getElementById("authors-section")!;
-  const authorEl = document.getElementById("author1-img") as HTMLElement;
-  const textEl = document.getElementById("author1-text") as HTMLElement;
-  const containerEl = document.getElementById(
-    "author1-container",
-  ) as HTMLElement;
-
-  const OFFSET = 280;
-  const TEXT_LAG = 0.07;
-  const CONTAINER_LAG = 0.04;
-
-  let textX = OFFSET;
-  let containerX = OFFSET + 200;
-
   function lerp(a: number, b: number, t: number) {
     return a + (b - a) * t;
   }
-
-  function getProgress() {
-    const rect = section.getBoundingClientRect();
-    const start = window.innerHeight * 1.0;
-    const end = window.innerHeight * 0.05;
-    return Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
-  }
-
   function easeOut(t: number) {
     return 1 - Math.pow(1 - t, 3);
   }
-
-  function animate() {
-    const progress = easeOut(getProgress());
-    const targetAuthorX = lerp(-OFFSET, 0, progress);
-    const targetTextX = lerp(OFFSET, 0, progress);
-
-    textX = lerp(textX, targetTextX, TEXT_LAG);
-    containerX = lerp(containerX, textX, CONTAINER_LAG);
-
-    authorEl.style.transform = `translateX(${targetAuthorX}px)`;
-    textEl.style.transform = `translateX(${textX}px)`;
-    containerEl.style.transform = `translateX(${containerX}px)`;
-
-    requestAnimationFrame(animate);
-  }
-
-  containerEl.style.transform = `translateX(${OFFSET + 200}px)`;
-  authorEl.style.transform = `translateX(${-OFFSET}px)`;
-  textEl.style.transform = `translateX(${textX}px)`;
-
-  requestAnimationFrame(animate);
-
-  // ── Author 2 animation ──────────────────────────────────────────
-  const author2Section = document.getElementById("author2-section")!;
-  const nameEl = document.getElementById("author2-name") as HTMLElement;
-
-  const SLIDE_OFFSET = 120;
-  const NAME_LAG = 0.1;
-
-  let nameX = -SLIDE_OFFSET;
-
-  function getAuthor2Progress() {
-    const rect = author2Section.getBoundingClientRect();
-    const start = window.innerHeight * 0.95;
-    const end = window.innerHeight * 0.35;
+  function getProgress(el: HTMLElement, startFrac = 1.0, endFrac = 0.2) {
+    const rect = el.getBoundingClientRect();
+    const start = window.innerHeight * startFrac;
+    const end = window.innerHeight * endFrac;
     return Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
   }
 
-  function animateAuthor2() {
-    const nameTarget = lerp(-SLIDE_OFFSET, 0, easeOut(getAuthor2Progress()));
-    nameX = lerp(nameX, nameTarget, NAME_LAG);
-    nameEl.style.transform = `translateX(${nameX}px)`;
-    requestAnimationFrame(animateAuthor2);
+  const OFFSET = 280;
+  const LAG = 0.07;
+
+  const rows = document.querySelectorAll<HTMLElement>("[data-author-index]");
+
+  const state = Array.from(rows).map((row, i) => {
+    const photoLeft = i % 2 === 0;
+    const photo = row.querySelector<HTMLElement>(".author-photo")!;
+    const text = row.querySelector<HTMLElement>(".author-text")!;
+
+    // photo slides from its side, text from the opposite
+    const photoDir = photoLeft ? -1 : 1;
+    const textDir = photoLeft ? 1 : -1;
+
+    photo.style.transform = `translateX(${photoDir * OFFSET}px)`;
+    text.style.transform = `translateX(${textDir * OFFSET}px)`;
+
+    return {
+      row,
+      photo,
+      text,
+      photoDir,
+      textDir,
+      photoX: photoDir * OFFSET,
+      textX: textDir * OFFSET,
+    };
+  });
+
+  function animate() {
+    for (const s of state) {
+      const p = easeOut(getProgress(s.row));
+      const targetPhoto = lerp(s.photoDir * OFFSET, 0, p);
+      const targetText = lerp(s.textDir * OFFSET, 0, p);
+      s.photoX = lerp(s.photoX, targetPhoto, LAG);
+      s.textX = lerp(s.textX, targetText, LAG);
+      s.photo.style.transform = `translateX(${s.photoX}px)`;
+      s.text.style.transform = `translateX(${s.textX}px)`;
+    }
+    requestAnimationFrame(animate);
   }
 
-  nameEl.style.transform = `translateX(${-SLIDE_OFFSET}px)`;
-
-  requestAnimationFrame(animateAuthor2);
+  requestAnimationFrame(animate);
 </script>
