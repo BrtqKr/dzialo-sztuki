@@ -1,34 +1,109 @@
 ---
+import author1 from "../../assets/about/authors/author1.png";
+import author2 from "../../assets/about/authors/author2.png";
+import author3 from "../../assets/about/authors/author3.png";
+import author4 from "../../assets/about/authors/author4.png";
 import mask1 from "../../assets/about/authors/mask1.svg";
 import mask2 from "../../assets/about/authors/mask2.svg";
 import mask3 from "../../assets/about/authors/mask3.svg";
 import mask4 from "../../assets/about/authors/mask4.svg";
+import border1Raw from "../../assets/about/authors/border1.svg?raw";
+
+// Parse SVG path → polygon points. Universal for M/L/H/V commands.
+function parseSvgPath(svgRaw: string) {
+  const svgH = parseFloat(svgRaw.match(/\bheight="([\d.]+)"/)?.[1] ?? "1");
+  const svgW = parseFloat(svgRaw.match(/\bwidth="([\d.]+)"/)?.[1] ?? "1");
+  const d = svgRaw.match(/\bd="([^"]+)"/)?.[1] ?? "";
+  const tokens = d.match(/[MLHVZmlhvz]|[-\d.]+/g) ?? [];
+
+  const pts: [number, number][] = [];
+  let cx = 0,
+    cy = 0,
+    i = 0;
+  while (i < tokens.length) {
+    const t = tokens[i];
+    if (t === "M" || t === "L") {
+      cx = +tokens[++i];
+      cy = +tokens[++i];
+      pts.push([cx, cy]);
+    } else if (t === "H") {
+      cx = +tokens[++i];
+      pts.push([cx, cy]);
+    } else if (t === "V") {
+      cy = +tokens[++i];
+      pts.push([cx, cy]);
+    }
+    i++;
+  }
+  return { pts, svgW, svgH };
+}
+
+// Returns rendered dimensions, a clip-path polygon (%), and a float style for text shaping.
+function parseBorderShape(svgRaw: string, renderedHeight: number) {
+  const { pts, svgW, svgH } = parseSvgPath(svgRaw);
+  const scale = renderedHeight / svgH;
+  const renderedWidth = Math.round(svgW * scale);
+
+  // clip-path: full polygon in percentages
+  const clipPoly = pts
+    .map(
+      ([x, y]) =>
+        `${((x / svgW) * 100).toFixed(2)}% ${((y / svgH) * 100).toFixed(2)}%`,
+    )
+    .join(", ");
+
+  // shape-outside float: left-side irregular points only
+  const leftPts = pts.filter(([x]) => x < svgW * 0.9);
+  const floatW = Math.max(...leftPts.map(([x]) => x)) * scale;
+  const floatPoly = [
+    "0px 0px",
+    ...leftPts.map(
+      ([x, y]) => `${(x * scale).toFixed(1)}px ${(y * scale).toFixed(1)}px`,
+    ),
+    `0px ${renderedHeight}px`,
+  ].join(", ");
+
+  return {
+    width: renderedWidth,
+    clipPath: `clip-path:polygon(${clipPoly});`,
+    floatStyle: `float:left;width:${Math.ceil(floatW + 4)}px;height:${renderedHeight}px;shape-outside:polygon(${floatPoly});`,
+  };
+}
 
 const authors = [
   {
+    photo: author1.src,
     mask: mask1.src,
-    maskW: 551, maskH: 552,
-    name: "Imię Nazwisko",
-    title: "Tytuł / Rola",
-    desc: "Linia pierwsza tekstu o autorze. Linia druga tekstu o autorze. Linia trzecia tekstu o autorze. Linia czwarta tekstu o autorze.",
+    maskW: 551,
+    maskH: 552,
+    border: border1Raw,
+    name: "Dominika Gruszczyńska",
+    title: "Prezeska Fundacji Działo Sztuki",
+    desc: "Z wykształcenia jestem magistrą kierunku Art & Design na UKEN. Zarówno moja praca licencjacka, jak i magisterska były projektami gier komputerowych, oraz ilustrowanych książek dla dzieci. Ukończyłam również Liceum Plastyczne im. Szermentowskiego na kierunku tradycyjnych technik malarskich i pozłotniczych.  Na co dzień pracuję jako metodyk i nauczyciel - lubię wspierać innych w rozwoju i tworzyć przestrzeń, w której każdy może czuć się swobodnie.Mam doświadczenie w pracy z ludźmi w różnym wieku :o).Prywatnie jestem gamerem, który uwielbia filmy, seriale, kolekcjonowanie różnych pierdół i rysowanie. Mam również 9-letniego mopsa o imieniu Donatello, który jest dla mnie całym światem. Moją życiową misją jest sprawienie, aby ludzie czuli się wyjątkowi, zauważeni i zaopiekowani.",
   },
   {
+    photo: author2.src,
     mask: mask2.src,
-    maskW: 420, maskH: 520,
-    name: "Imię Nazwisko",
-    title: "Tytuł / Rola",
-    desc: "Linia pierwsza tekstu o autorze. Linia druga tekstu o autorze. Linia trzecia tekstu o autorze. Linia czwarta tekstu o autorze.",
+    maskW: 420,
+    maskH: 520,
+    name: "Alicja Pawluk-Chocholska",
+    title: "Wiceprezeska Fundacji Działo Sztuki",
+    desc: "Pedagożka, arteterapeutka, artystka. Absolwentka Instytutu Edukacji Artystycznej na Akademii Pedagogiki Specjalnej im. Marii Grzegorzewskiej w Warszawie na specjalności arteterapia. W 2021 obroniła dyplom licencjacki (Ciałopozytywność. Ciało kobiece w sztuce), a w 2023 uzyskała tytuł magistry (Odejście i Bycie. Kto umiera? O śmierci i towarzyszeniu w ostatnim etapie życia). Zainteresowaniem twórczyni jest terapeutyczna moc sztuki. Stworzyła szereg autorskich warsztatów intermedialnych Była pracownicą Warsztatu Terapii Zajęciowej, współpracowała z osobami w kryzysie psychicznym oraz z osobami z niepełnosprawnością intelektualną. Aktualnie zajmuje się metodyką nauczania artystycznego.",
   },
   {
-    mask: mask3.src,
-    maskW: 551, maskH: 552,
-    name: "Imię Nazwisko",
-    title: "Tytuł / Rola",
-    desc: "Linia pierwsza tekstu o autorze. Linia druga tekstu o autorze. Linia trzecia tekstu o autorze. Linia czwarta tekstu o autorze.",
-  },
-  {
+    photo: author3.src,
     mask: mask4.src,
-    maskW: 551, maskH: 552,
+    maskW: 551,
+    maskH: 552,
+    name: "Imię Nazwisko",
+    title: "Tytuł / Rola",
+    desc: "Linia pierwsza tekstu o autorze. Linia druga tekstu o autorze. Linia trzecia tekstu o autorze. Linia czwarta tekstu o autorze.",
+  },
+  {
+    photo: author4.src,
+    mask: mask3.src,
+    maskW: 551,
+    maskH: 552,
     name: "Imię Nazwisko",
     title: "Tytuł / Rola",
     desc: "Linia pierwsza tekstu o autorze. Linia druga tekstu o autorze. Linia trzecia tekstu o autorze. Linia czwarta tekstu o autorze.",
@@ -38,55 +113,113 @@ const authors = [
 
 <div style="clip-path: inset(0 -100vw -100vh 0)">
   <section id="authors-section" class="py-24 w-full">
-    <div class="flex flex-col w-full">
+    <div class="flex flex-col items-center w-full gap-y-16">
+      {
+        authors.map((author, i) => {
+          const photoLeft = i % 2 === 0;
+          const w = Math.round(author.maskW * 0.82);
+          const h = Math.round(author.maskH * 0.82);
+          const maskCss = `mask-image:url(${author.mask});mask-size:contain;mask-repeat:no-repeat;mask-position:center;-webkit-mask-image:url(${author.mask});-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;-webkit-mask-position:center;`;
+          const shape = author.border
+            ? parseBorderShape(author.border, h)
+            : null;
 
-      {authors.map((author, i) => {
-        const photoLeft = i % 2 === 0;
-        return (
-          <div
-            class={`flex flex-row items-center w-full ${photoLeft ? "justify-start pl-16" : "justify-end pr-16"} -mt-16 first:mt-0`}
-            data-author-index={i}
-          >
-            {photoLeft ? (
-              <>
-                <img
-                  class="author-photo shrink-0 block"
-                  src={author.mask}
-                  alt={author.name}
-                  width={author.maskW * 0.75}
-                  height={author.maskH * 0.75}
-                  style="object-fit:contain;"
-                />
-                <div class="author-text font-[Michroma] pl-16 max-w-sm">
-                  <p class="text-2xl leading-tight">{author.name}</p>
-                  <p class="text-base text-[#00938A] mt-2">{author.title}</p>
-                  <p class="text-sm leading-7 mt-4">{author.desc}</p>
-                </div>
-              </>
-            ) : (
-              <>
-                <div class="author-text font-[Michroma] pr-16 max-w-sm text-right">
-                  <p class="text-2xl leading-tight">{author.name}</p>
-                  <p class="text-base text-[#00938A] mt-2">{author.title}</p>
-                  <p class="text-sm leading-7 mt-4">{author.desc}</p>
-                </div>
-                <img
-                  class="author-photo shrink-0 block"
-                  src={author.mask}
-                  alt={author.name}
-                  width={author.maskW * 0.75}
-                  height={author.maskH * 0.75}
-                  style="object-fit:contain;"
-                />
-              </>
-            )}
-          </div>
-        );
-      })}
-
+          return (
+            <div
+              class="flex flex-row items-start"
+              style="width:1100px;"
+              data-author-index={i}
+            >
+              {photoLeft ? (
+                <>
+                  <div
+                    class="author-photo shrink-0"
+                    style={`width:${w}px;height:${h}px;`}
+                  >
+                    <img
+                      src={author.photo}
+                      alt={author.name}
+                      style={`width:100%;height:100%;object-fit:cover;${maskCss}`}
+                    />
+                  </div>
+                  {shape ? (
+                    <div
+                      class="author-text relative shrink-0"
+                      style={`width:${shape.width}px;height:${h}px;margin-left:-8px;`}
+                    >
+                      <div class="border-svg-layer absolute inset-0 pointer-events-none">
+                        <Fragment set:html={author.border} />
+                      </div>
+                      <div
+                        class="relative z-10 h-full py-8 pr-10 font-[Michroma]"
+                        style={shape.clipPath}
+                      >
+                        <div style={shape.floatStyle} />
+                        <p class="text-2xl leading-tight text-left">
+                          {author.name}
+                        </p>
+                        <p class="text-base text-[#00938A] mt-2 text-left">
+                          {author.title}
+                        </p>
+                        <p class="text-[14px] leading-7 mt-4 text-center">
+                          {author.desc}
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div class="author-text font-[Michroma] pl-12 flex-1 text-center pt-16">
+                      <p class="text-2xl leading-tight text-left">
+                        {author.name}
+                      </p>
+                      <p class="text-base text-[#00938A] mt-2 text-left">
+                        {author.title}
+                      </p>
+                      <p class="font-[Michroma] text-[14px] leading-7 mt-4">
+                        {author.desc}
+                      </p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div class="author-text font-[Michroma] pr-12 flex-1 text-center pt-16">
+                    <p class="text-2xl leading-tight text-left">
+                      {author.name}
+                    </p>
+                    <p class="text-base text-[#00938A] mt-2 text-left">
+                      {author.title}
+                    </p>
+                    <p class="font-[Michroma] text-[14px] leading-7 mt-4">
+                      {author.desc}
+                    </p>
+                  </div>
+                  <div
+                    class="author-photo shrink-0"
+                    style={`width:${w}px;height:${h}px;`}
+                  >
+                    <img
+                      src={author.photo}
+                      alt={author.name}
+                      style={`width:100%;height:100%;object-fit:cover;${maskCss}`}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+          );
+        })
+      }
     </div>
   </section>
 </div>
+
+<style>
+  /* make the raw SVG fill its wrapper div */
+  .border-svg-layer svg {
+    width: 100%;
+    height: 100%;
+  }
+</style>
 
 <script>
   function lerp(a: number, b: number, t: number) {
@@ -111,14 +244,10 @@ const authors = [
     const photoLeft = i % 2 === 0;
     const photo = row.querySelector<HTMLElement>(".author-photo")!;
     const text = row.querySelector<HTMLElement>(".author-text")!;
-
-    // photo slides from its side, text from the opposite
     const photoDir = photoLeft ? -1 : 1;
     const textDir = photoLeft ? 1 : -1;
-
     photo.style.transform = `translateX(${photoDir * OFFSET}px)`;
     text.style.transform = `translateX(${textDir * OFFSET}px)`;
-
     return {
       row,
       photo,
