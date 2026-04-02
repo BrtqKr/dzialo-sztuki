@@ -1,0 +1,124 @@
+---
+import integracjeImg from "../../assets/offer/integracje.webp";
+import warsztatyImg from "../../assets/offer/warsztaty.webp";
+import polkolonieImg from "../../assets/offer/polkolonie.webp";
+
+const tabs = [
+  {
+    id: "integracje",
+    label: "INTEGRACJE",
+    img: integracjeImg, imgW: 1356, imgH: 904,
+    content:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+  },
+  {
+    id: "warsztaty",
+    label: "WARSZTATY",
+    img: warsztatyImg, imgW: 1200, imgH: 934,
+    content:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+  },
+  {
+    id: "polkolonie",
+    label: "PÓŁKOLONIE",
+    img: polkolonieImg, imgW: 1184, imgH: 1064,
+    content:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+  },
+];
+---
+
+<script>
+  const buttons = document.querySelectorAll<HTMLElement>("[data-tab]");
+  const panels = document.querySelectorAll<HTMLElement>("[data-panel]");
+
+  function activate(id: string) {
+    buttons.forEach((btn) => {
+      btn.dataset.active = btn.dataset.tab === id ? "true" : "false";
+    });
+    panels.forEach((panel) => {
+      const active = panel.dataset.panel === id;
+      panel.style.opacity = active ? "1" : "0";
+      panel.style.pointerEvents = active ? "auto" : "none";
+    });
+  }
+
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      window.location.hash = btn.dataset.tab!;
+    });
+  });
+
+  function activateFromHash() {
+    const hash = window.location.hash.slice(1);
+    const valid = Array.from(buttons).some((b) => b.dataset.tab === hash);
+    activate(valid ? hash : "integracje");
+  }
+
+  window.addEventListener("hashchange", activateFromHash);
+  activateFromHash();
+</script>
+
+<div class="mx-40 mt-24">
+  <div class="w-full">
+    <div
+      class="bg-black w-full h-16.75 justify-center flex items-center px-27 gap-x-24"
+    >
+      {
+        tabs.map((tab) => (
+          <button
+            data-tab={tab.id}
+            data-active={tab.id === "integracje" ? "true" : "false"}
+            class="tab-btn font-[Michroma] uppercase tracking-widest transition-colors duration-200 cursor-pointer"
+          >
+            {tab.label}
+          </button>
+        ))
+      }
+    </div>
+
+    <div
+      class="tab-panels border-l border-r border-t border-black pt-12 mt-16 px-8"
+      style="margin-bottom: -300px;"
+    >
+      {
+        tabs.map((tab) => (
+          <div
+            data-panel={tab.id}
+            class="tab-panel transition-opacity duration-400"
+            style={`opacity: ${tab.id === "integracje" ? "1" : "0"}; pointer-events: ${tab.id === "integracje" ? "auto" : "none"};`}
+          >
+            <p class="font-[Michroma] text-lg text-center mb-28">
+              {tab.content}
+            </p>
+            <img
+              src={tab.img.src}
+              alt={tab.label}
+              width={tab.imgW}
+              height={tab.imgH}
+              class="mx-16 w-[calc(100%-8rem)] h-auto"
+            />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  .tab-panels {
+    display: grid;
+    padding-bottom: 300px;
+  }
+  .tab-panel {
+    grid-row: 1;
+    grid-column: 1;
+  }
+  .tab-btn {
+    font-size: 16px;
+    color: #f5f5f5;
+  }
+  .tab-btn[data-active="true"] {
+    color: #f7cb1b;
+  }
+</style>
