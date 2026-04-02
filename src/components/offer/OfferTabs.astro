@@ -1,30 +1,12 @@
 ---
-import integracjeImg from "../../assets/offer/integracje.webp";
-import warsztatyImg from "../../assets/offer/warsztaty.webp";
-import polkolonieImg from "../../assets/offer/polkolonie.webp";
+import IntegracjeContent from "./IntegracjeContent.astro";
+import WarsztatyContent from "./WarsztatyContent.astro";
+import PolkolonieContent from "./PolkolonieContent.astro";
 
 const tabs = [
-  {
-    id: "integracje",
-    label: "INTEGRACJE",
-    img: integracjeImg, imgW: 1356, imgH: 904,
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-  },
-  {
-    id: "warsztaty",
-    label: "WARSZTATY",
-    img: warsztatyImg, imgW: 1200, imgH: 934,
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-  },
-  {
-    id: "polkolonie",
-    label: "PÓŁKOLONIE",
-    img: polkolonieImg, imgW: 1184, imgH: 1064,
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-  },
+  { id: "integracje", label: "INTEGRACJE" },
+  { id: "warsztaty", label: "WARSZTATY" },
+  { id: "polkolonie", label: "PÓŁKOLONIE" },
 ];
 ---
 
@@ -32,15 +14,58 @@ const tabs = [
   const buttons = document.querySelectorAll<HTMLElement>("[data-tab]");
   const panels = document.querySelectorAll<HTMLElement>("[data-panel]");
 
+  const FADE = 200;
+  let switching = false;
+  let firstRun = true;
+
   function activate(id: string) {
     buttons.forEach((btn) => {
       btn.dataset.active = btn.dataset.tab === id ? "true" : "false";
     });
-    panels.forEach((panel) => {
-      const active = panel.dataset.panel === id;
-      panel.style.opacity = active ? "1" : "0";
-      panel.style.pointerEvents = active ? "auto" : "none";
-    });
+
+    if (firstRun) {
+      panels.forEach((panel) => {
+        const active = panel.dataset.panel === id;
+        panel.style.display = active ? "block" : "none";
+        panel.style.opacity = active ? "1" : "0";
+        panel.style.pointerEvents = active ? "auto" : "none";
+      });
+      firstRun = false;
+      return;
+    }
+
+    const current = Array.from(panels).find(
+      (p) => p.style.display !== "none" && p.dataset.panel !== id,
+    );
+    const next = document.querySelector<HTMLElement>(`[data-panel="${id}"]`);
+
+    if (!next) return;
+
+    if (current && current !== next && !switching) {
+      switching = true;
+      current.style.opacity = "0";
+      current.style.pointerEvents = "none";
+
+      setTimeout(() => {
+        current.style.display = "none";
+        next.style.display = "block";
+        next.style.opacity = "0";
+        next.style.pointerEvents = "auto";
+
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => {
+            next.style.opacity = "1";
+            setTimeout(() => {
+              switching = false;
+            }, FADE);
+          }),
+        );
+      }, FADE);
+    } else if (!switching) {
+      next.style.display = "block";
+      next.style.opacity = "1";
+      next.style.pointerEvents = "auto";
+    }
   }
 
   buttons.forEach((btn) => {
@@ -59,7 +84,7 @@ const tabs = [
   activateFromHash();
 </script>
 
-<div class="mx-40 mt-24">
+<div class="mx-40 mt-24 mb-5">
   <div class="w-full">
     <div
       class="bg-black w-full h-16.75 justify-center flex items-center px-27 gap-x-24"
@@ -77,27 +102,17 @@ const tabs = [
       }
     </div>
 
-    <div
-      class="tab-panels border-l border-r border-t border-black pt-12 mt-16 px-8"
-      style="margin-bottom: -300px;"
-    >
+    <div class="tab-panels border border-black pt-15 px-13.5 pb-6.5">
       {
         tabs.map((tab) => (
           <div
             data-panel={tab.id}
-            class="tab-panel transition-opacity duration-400"
-            style={`opacity: ${tab.id === "integracje" ? "1" : "0"}; pointer-events: ${tab.id === "integracje" ? "auto" : "none"};`}
+            class="tab-panel"
+            style={`display: ${tab.id === "integracje" ? "block" : "none"}; opacity: ${tab.id === "integracje" ? "1" : "0"}; pointer-events: ${tab.id === "integracje" ? "auto" : "none"};`}
           >
-            <p class="font-[Michroma] text-lg text-center mb-28">
-              {tab.content}
-            </p>
-            <img
-              src={tab.img.src}
-              alt={tab.label}
-              width={tab.imgW}
-              height={tab.imgH}
-              class="mx-16 w-[calc(100%-8rem)] h-auto"
-            />
+            {tab.id === "integracje" && <IntegracjeContent />}
+            {tab.id === "warsztaty" && <WarsztatyContent />}
+            {tab.id === "polkolonie" && <PolkolonieContent />}
           </div>
         ))
       }
@@ -107,12 +122,9 @@ const tabs = [
 
 <style>
   .tab-panels {
-    display: grid;
-    padding-bottom: 300px;
   }
   .tab-panel {
-    grid-row: 1;
-    grid-column: 1;
+    transition: opacity 0.2s ease;
   }
   .tab-btn {
     font-size: 16px;
