@@ -18,20 +18,36 @@ import navbarLogo from "../assets/navbar-logo2.svg";
       link.style.color = "";
     });
   });
+
+  function updateNavbar() {
+    const bg = document.getElementById("navbar-bg");
+    if (!bg) return;
+    const t = Math.min(window.scrollY / 150, 1);
+    bg.style.backgroundColor = `rgba(255,255,255,${(t * 0.65).toFixed(3)})`;
+    bg.style.backdropFilter = t > 0 ? `blur(${(t * 8).toFixed(1)}px)` : "none";
+  }
+
+  updateNavbar();
+  window.addEventListener("scroll", updateNavbar, { passive: true });
+  document.addEventListener("astro:page-load", updateNavbar);
 </script>
 
-<nav class="flex flex-row h-40.25 px-27 items-center justify-between">
-  <a href="/">
+<nav
+  id="main-navbar"
+  class="fixed top-0 left-0 right-0 z-50 h-20 px-12 flex flex-row items-center justify-between"
+>
+  <div id="navbar-bg" class="absolute inset-0 pointer-events-none"></div>
+  <a href="/" class="relative">
     <img
       src={navbarLogo.src}
       alt="Logo"
-      width="238"
-      height="126"
+      width="104"
+      height="55"
       style="flex-shrink:0;aspect-ratio:238/126"
     />
   </a>
   <div
-    class="flex flex-row gap-x-16 uppercase text-xl font-[Michroma] items-end mb-9 h-full"
+    class="relative flex flex-row gap-x-12 uppercase text-lg font-[Michroma] items-center"
   >
     <a href="/about" class="nav-link text-nowrap">O nas</a>
     <a href="/offer" class="nav-link text-nowrap">Oferta</a>
