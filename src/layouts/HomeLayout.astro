@@ -18,7 +18,9 @@ import "../styles/global.css";
   </head>
   <body class="overflow-hidden">
     <HomeNavbar />
-    <slot />
+    <div class="relative w-full h-full overflow-hidden">
+      <slot />
+    </div>
   </body>
 </html>
 

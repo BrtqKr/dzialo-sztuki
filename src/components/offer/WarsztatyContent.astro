@@ -1,0 +1,24 @@
+---
+import warsztatyImg from "../../assets/offer/warsztaty.webp";
+import Button from "../Button.astro";
+---
+
+<div class="font-[Michroma] text-lg mb-8 flex flex-col gap-y-6">
+  <p>Nasze doświadczenie i pasja do dzielenia się wiedzą o sztuce i jej oddziaływaniu na człowieka, zaowocowało potrzebą stworzenia serii warsztatów, które chciałybyśmy prowadzić dla wszystkich, którzy są zainteresowani samorozwojem. W naszym arsenale znajdują się warsztaty dla dzieci i dorosłych w formacie cyklicznym, sezonowym oraz krótkometrażowym.</p>
+  <p>→ Warsztaty arteterapeutyczne - terapia kolorem (chromoterapia)</p>
+  <p>→ Warsztaty mindfulness z wykorzystaniem transferu (cyjanotypia i foto)</p>
+  <p>→ Warsztaty z ilustracji analogowej - opowieść wizualna o pamięci (monotypia, kredka, akwarela)</p>
+  <p>→ Warsztaty dla seniorów - biblioterapia</p>
+</div>
+<img
+  src={warsztatyImg.src}
+  alt="Warsztaty"
+  width="1200"
+  height="934"
+  class="mx-21 w-[calc(100%-168px)] h-auto"
+/>
+<div class="flex justify-end mt-9">
+  <Button href="/warsztaty-cennik.pdf" target="_blank"
+    >*CENY I SCENARIUSZE*</Button
+  >
+</div>

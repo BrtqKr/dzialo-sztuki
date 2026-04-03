@@ -1,0 +1,200 @@
+---
+import IntegracjeContent from "./IntegracjeContent.astro";
+import WarsztatyContent from "./WarsztatyContent.astro";
+import PolkolonieContent from "./PolkolonieContent.astro";
+
+const tabs = [
+  { id: "integracje", label: "INTEGRACJE" },
+  { id: "warsztaty", label: "WARSZTATY" },
+  { id: "polkolonie", label: "PÓŁKOLONIE" },
+];
+---
+
+<script>
+  const buttons = document.querySelectorAll<HTMLElement>("[data-tab]");
+  const panels = document.querySelectorAll<HTMLElement>("[data-panel]");
+  const inner = document.querySelector<HTMLElement>(".tab-panels-inner");
+
+  const FADE = 350;
+  let switching = false;
+  let firstRun = true;
+
+  // Active panel stays position:relative (natural height).
+  // Inactive panels are position:absolute so they don't affect layout.
+  function setActive(panel: HTMLElement) {
+    panel.style.position = "relative";
+    panel.dataset.panelActive = "true";
+  }
+
+  function setInactive(panel: HTMLElement) {
+    panel.style.position = "absolute";
+    delete panel.dataset.panelActive;
+  }
+
+  function animateIn(panel: HTMLElement) {
+    const children = Array.from(panel.children) as HTMLElement[];
+    const textEls = children.filter((el) => el.tagName !== "IMG");
+    const imgEl = children.find((el) => el.tagName === "IMG") ?? null;
+
+    [...textEls, ...(imgEl ? [imgEl] : [])].forEach((el) => {
+      el.style.transition = "none";
+      el.style.opacity = "0";
+    });
+
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        textEls.forEach((el) => {
+          el.style.transition = `opacity ${FADE}ms ease-in-out`;
+          el.style.opacity = "1";
+        });
+        setTimeout(() => {
+          if (imgEl) {
+            imgEl.style.transition = `opacity ${FADE}ms ease-in-out`;
+            imgEl.style.opacity = "1";
+          }
+        }, FADE);
+      }),
+    );
+  }
+
+  function activate(id: string) {
+    buttons.forEach((btn) => {
+      btn.dataset.active = btn.dataset.tab === id ? "true" : "false";
+    });
+
+    const next = document.querySelector<HTMLElement>(`[data-panel="${id}"]`);
+    if (!next) return;
+
+    if (firstRun) {
+      panels.forEach((panel) => {
+        const active = panel.dataset.panel === id;
+        panel.style.opacity = active ? "1" : "0";
+        panel.style.pointerEvents = active ? "auto" : "none";
+        if (active) setActive(panel); else setInactive(panel);
+      });
+      animateIn(next);
+      firstRun = false;
+      return;
+    }
+
+    if (switching) return;
+
+    const current = Array.from(panels).find(
+      (p) => p.dataset.panelActive === "true" && p.dataset.panel !== id,
+    );
+
+    if (!current || current === next) {
+      setActive(next);
+      next.style.opacity = "1";
+      next.style.pointerEvents = "auto";
+      animateIn(next);
+      return;
+    }
+
+    switching = true;
+
+    // Lock container height so nothing jumps when current becomes absolute
+    if (inner) inner.style.height = inner.offsetHeight + "px";
+
+    // Move current to absolute (it was relative, holding height)
+    setInactive(current);
+
+    // Prepare next: absolute, invisible
+    next.style.transition = "none";
+    next.style.opacity = "0";
+    // next is already absolute; bring it to front
+    next.style.zIndex = "1";
+    current.style.zIndex = "0";
+
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        current.style.transition = `opacity ${FADE}ms ease-in-out`;
+        current.style.opacity = "0";
+        current.style.pointerEvents = "none";
+
+        next.style.transition = `opacity ${FADE}ms ease-in-out`;
+        next.style.opacity = "1";
+        next.style.pointerEvents = "auto";
+
+        animateIn(next);
+
+        setTimeout(() => {
+          // Next becomes the new relative anchor, release locked height
+          setActive(next);
+          next.style.zIndex = "";
+          current.style.zIndex = "";
+          if (inner) inner.style.height = "";
+          switching = false;
+        }, FADE * 2);
+      }),
+    );
+  }
+
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      window.location.hash = btn.dataset.tab!;
+    });
+  });
+
+  function activateFromHash() {
+    const hash = window.location.hash.slice(1);
+    const valid = Array.from(buttons).some((b) => b.dataset.tab === hash);
+    activate(valid ? hash : "integracje");
+  }
+
+  window.addEventListener("hashchange", activateFromHash);
+  activateFromHash();
+</script>
+
+<div class="mx-40 mt-24 mb-5">
+  <div class="w-full">
+    <div
+      class="bg-black w-full h-16.75 justify-center flex items-center px-27 gap-x-24"
+    >
+      {
+        tabs.map((tab) => (
+          <button
+            data-tab={tab.id}
+            data-active={tab.id === "integracje" ? "true" : "false"}
+            class="tab-btn font-[Michroma] uppercase tracking-widest transition-colors duration-200 cursor-pointer"
+          >
+            {tab.label}
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="tab-panels border border-black pt-15 px-13.5 pb-6.5">
+      <div class="tab-panels-inner relative">
+        {
+          tabs.map((tab) => (
+            <div
+              data-panel={tab.id}
+              class="tab-panel"
+              style={`position: ${tab.id === "integracje" ? "relative" : "absolute"}; top: 0; left: 0; width: 100%; opacity: ${tab.id === "integracje" ? "1" : "0"}; pointer-events: ${tab.id === "integracje" ? "auto" : "none"};`}
+            >
+              {tab.id === "integracje" && <IntegracjeContent />}
+              {tab.id === "warsztaty" && <WarsztatyContent />}
+              {tab.id === "polkolonie" && <PolkolonieContent />}
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .tab-panel {
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+  .tab-btn {
+    font-size: 16px;
+    color: #f5f5f5;
+  }
+  .tab-btn[data-active="true"] {
+    color: #f7cb1b;
+  }
+</style>

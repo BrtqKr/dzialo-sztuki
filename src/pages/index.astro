@@ -11,13 +11,16 @@ const FONT_CLASS: Record<string, string> = {
 };
 
 const links = [
-  { title: "Warsztaty\n25.10", font: "cute",    fontSize: 32, x: "18vw", y: "52vh" },
-  { title: "Plener\nlipiec",   font: "michroma", fontSize: 24, x: "82vw", y: "38vh" },
+  { title: "Warsztaty\n25.10", font: "cute",    fontSize: "clamp(20px, 2.1vw, 68px)", x: "18vw", y: "52vh" },
+  { title: "Plener\nlipiec",   font: "michroma", fontSize: "clamp(15px, 1.6vw, 51px)", x: "82vw", y: "38vh" },
 ];
 
 const stars = links.map((link) => {
   const color = COLORS[Math.floor(Math.random() * COLORS.length)];
-  const svg = starSmallRaw.replace(/fill="#[A-Fa-f0-9]{6}"/, `fill="${color}"`);
+  const svg = starSmallRaw
+    .replace(/fill="#[A-Fa-f0-9]{6}"/, `fill="${color}"`)
+    .replace(/width="\d+"/, 'width="100%"')
+    .replace(/height="\d+"/, 'height="100%"');
   return { ...link, svg, color };
 });
 ---
@@ -29,12 +32,12 @@ const stars = links.map((link) => {
         href={star.path ?? "#"}
         data-color={star.color}
         class="star-fade fixed inline-block no-underline z-10"
-        style={`left:${star.x};top:${star.y};transform:translate(-50%,-50%);animation-delay:${i * 0.8}s;`}
+        style={`left:${star.x};top:${star.y};transform:translate(-50%,-50%);animation-delay:${i * 0.8}s;width:clamp(130px,12vw,380px);`}
       >
         <Fragment set:html={star.svg} />
         <span
           class={`${FONT_CLASS[star.font]} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-black text-center w-3/4 whitespace-pre-line`}
-          style={`font-size:${star.fontSize}px;line-height:1.1;`}
+          style={`font-size:${star.fontSize};line-height:1.1;`}
         >
           {star.title}
         </span>

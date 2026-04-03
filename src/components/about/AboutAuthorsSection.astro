@@ -7,68 +7,6 @@ import mask1 from "../../assets/about/authors/mask1.svg";
 import mask2 from "../../assets/about/authors/mask2.svg";
 import mask3 from "../../assets/about/authors/mask3.svg";
 import mask4 from "../../assets/about/authors/mask4.svg";
-import border1Raw from "../../assets/about/authors/border1.svg?raw";
-
-// Parse SVG path → polygon points. Universal for M/L/H/V commands.
-function parseSvgPath(svgRaw: string) {
-  const svgH = parseFloat(svgRaw.match(/\bheight="([\d.]+)"/)?.[1] ?? "1");
-  const svgW = parseFloat(svgRaw.match(/\bwidth="([\d.]+)"/)?.[1] ?? "1");
-  const d = svgRaw.match(/\bd="([^"]+)"/)?.[1] ?? "";
-  const tokens = d.match(/[MLHVZmlhvz]|[-\d.]+/g) ?? [];
-
-  const pts: [number, number][] = [];
-  let cx = 0,
-    cy = 0,
-    i = 0;
-  while (i < tokens.length) {
-    const t = tokens[i];
-    if (t === "M" || t === "L") {
-      cx = +tokens[++i];
-      cy = +tokens[++i];
-      pts.push([cx, cy]);
-    } else if (t === "H") {
-      cx = +tokens[++i];
-      pts.push([cx, cy]);
-    } else if (t === "V") {
-      cy = +tokens[++i];
-      pts.push([cx, cy]);
-    }
-    i++;
-  }
-  return { pts, svgW, svgH };
-}
-
-// Returns rendered dimensions, a clip-path polygon (%), and a float style for text shaping.
-function parseBorderShape(svgRaw: string, renderedHeight: number) {
-  const { pts, svgW, svgH } = parseSvgPath(svgRaw);
-  const scale = renderedHeight / svgH;
-  const renderedWidth = Math.round(svgW * scale);
-
-  // clip-path: full polygon in percentages
-  const clipPoly = pts
-    .map(
-      ([x, y]) =>
-        `${((x / svgW) * 100).toFixed(2)}% ${((y / svgH) * 100).toFixed(2)}%`,
-    )
-    .join(", ");
-
-  // shape-outside float: left-side irregular points only
-  const leftPts = pts.filter(([x]) => x < svgW * 0.9);
-  const floatW = Math.max(...leftPts.map(([x]) => x)) * scale;
-  const floatPoly = [
-    "0px 0px",
-    ...leftPts.map(
-      ([x, y]) => `${(x * scale).toFixed(1)}px ${(y * scale).toFixed(1)}px`,
-    ),
-    `0px ${renderedHeight}px`,
-  ].join(", ");
-
-  return {
-    width: renderedWidth,
-    clipPath: `clip-path:polygon(${clipPoly});`,
-    floatStyle: `float:left;width:${Math.ceil(floatW + 4)}px;height:${renderedHeight}px;shape-outside:polygon(${floatPoly});`,
-  };
-}
 
 const authors = [
   {
@@ -76,10 +14,10 @@ const authors = [
     mask: mask1.src,
     maskW: 551,
     maskH: 552,
-    border: border1Raw,
     name: "Dominika Gruszczyńska",
     title: "Prezeska Fundacji Działo Sztuki",
-    desc: "Z wykształcenia jestem magistrą kierunku Art & Design na UKEN. Zarówno moja praca licencjacka, jak i magisterska były projektami gier komputerowych, oraz ilustrowanych książek dla dzieci. Ukończyłam również Liceum Plastyczne im. Szermentowskiego na kierunku tradycyjnych technik malarskich i pozłotniczych.  Na co dzień pracuję jako metodyk i nauczyciel - lubię wspierać innych w rozwoju i tworzyć przestrzeń, w której każdy może czuć się swobodnie.Mam doświadczenie w pracy z ludźmi w różnym wieku :o).Prywatnie jestem gamerem, który uwielbia filmy, seriale, kolekcjonowanie różnych pierdół i rysowanie. Mam również 9-letniego mopsa o imieniu Donatello, który jest dla mnie całym światem. Moją życiową misją jest sprawienie, aby ludzie czuli się wyjątkowi, zauważeni i zaopiekowani.",
+    gapClass: "pl-16",
+    desc: "Z wykształcenia jestem magistrą kierunku Art & Design na UKEN. Zarówno moja praca licencjacka, jak i magisterska były projektami gier komputerowych, oraz ilustrowanych książek dla dzieci. Ukończyłam również Liceum Plastyczne im. Szermentowskiego na kierunku tradycyjnych technik malarskich i pozłotniczych. Na co dzień pracuję jako metodyk i nauczyciel - lubię wspierać innych w rozwoju i tworzyć przestrzeń, w której każdy może czuć się swobodnie. Mam doświadczenie w pracy z ludźmi w różnym wieku :o). Prywatnie jestem gamerem, który uwielbia filmy, seriale, kolekcjonowanie różnych pierdół i rysowanie. Mam również 9-letniego mopsa o imieniu Donatello, który jest dla mnie całym światem! :o) Moją życiową misją jest sprawienie, aby ludzie czuli się wyjątkowi, zauważeni i zaopiekowani.",
   },
   {
     photo: author2.src,
@@ -88,119 +26,95 @@ const authors = [
     maskH: 520,
     name: "Alicja Pawluk-Chocholska",
     title: "Wiceprezeska Fundacji Działo Sztuki",
-    desc: "Pedagożka, arteterapeutka, artystka. Absolwentka Instytutu Edukacji Artystycznej na Akademii Pedagogiki Specjalnej im. Marii Grzegorzewskiej w Warszawie na specjalności arteterapia. W 2021 obroniła dyplom licencjacki (Ciałopozytywność. Ciało kobiece w sztuce), a w 2023 uzyskała tytuł magistry (Odejście i Bycie. Kto umiera? O śmierci i towarzyszeniu w ostatnim etapie życia). Zainteresowaniem twórczyni jest terapeutyczna moc sztuki. Stworzyła szereg autorskich warsztatów intermedialnych Była pracownicą Warsztatu Terapii Zajęciowej, współpracowała z osobami w kryzysie psychicznym oraz z osobami z niepełnosprawnością intelektualną. Aktualnie zajmuje się metodyką nauczania artystycznego.",
+    gapClass: "pr-3.5",
+    desc: "Słowa klucz o mnie: pedagożka, arteterapeutka, artystka i siostra. W 2023 roku ukończyłam Edukację artystyczną w zakresie sztuk plastycznych oraz arteterapię w Instytucie Edukacji Artystycznej na Akademii Pedagogiki Specjalnej w Warszawie. Dyplomy zrealizowałam w pracowni grafiki warsztatowej, opowiadając o moich osobistych doświadczeniach jako kobiety, córki i siostry. W sztuce najbardziej interesuje mnie jej terapeutyczna moc, dlatego tworzę programy, w których staje się ona narzędziem do odkrywania siebie i sposobem komunikacji z sobą oraz ze światem. Jako terapeutka pracowałam w warsztatach terapii zajęciowej oraz w szpitalach na oddziałach psychiatrycznych, wspierając osoby z niepełnosprawnością intelektualną i osoby w kryzysie psychicznym. Od 2021 roku uczę rysunku i prowadzę zajęcia dla uczniów szkoły podstawowej, a od 2023 roku mam pod opieką zespół nauczycieli, z którymi pracuje rozwojowo. W swoich działaniach kieruję się uważnością, ciekawością i autentycznym zainteresowaniem drugim człowiekiem.",
   },
   {
     photo: author3.src,
-    mask: mask4.src,
-    maskW: 551,
-    maskH: 552,
-    name: "Imię Nazwisko",
-    title: "Tytuł / Rola",
-    desc: "Linia pierwsza tekstu o autorze. Linia druga tekstu o autorze. Linia trzecia tekstu o autorze. Linia czwarta tekstu o autorze.",
-  },
-  {
-    photo: author4.src,
     mask: mask3.src,
     maskW: 551,
     maskH: 552,
-    name: "Imię Nazwisko",
-    title: "Tytuł / Rola",
-    desc: "Linia pierwsza tekstu o autorze. Linia druga tekstu o autorze. Linia trzecia tekstu o autorze. Linia czwarta tekstu o autorze.",
+    name: "Aleksandra Rosochacka",
+    gapClass: "pl-6",
+    desc: "Jestem twórczynią wszechstronną i łączę w swojej pracy zarówno narzędzia tradycyjne, jak i nowe media cyfrowe. Szczególnie dobrze rozumiem się z litografią, ołówkiem, akwarelą, gwaszem, i grafiką komputerową. Te media są dla mnie językiem, dzięki któremu mogę komunikować się jako twórca i nauczyciel, pokazywać innym rzeczy, które wydają się być niedostępne, ukryte lub są alternatywnymi drogami wyrazu i docierania do siebie samego. Posiadam doświadczenie dydaktyczne w nauczaniu dzieci, młodzieży i dorosłych w zakresie sztuki arteterapii i metodyki. Interesuje się pojęciem pamięci i czasu oraz zgłębianiem tematu znaczenia sztuki jako narzędzia terapeutycznego w samorozwoju oraz relacji człowieka z naturą, korzystając ze swojego rodzinnego doświadczenia oraz życia pośród ludzi i zwierząt. Zajmuję się też szerokim wachlarzem realizacji z dziedziny grafiki wydawniczej, identyfikacji wizualnej oraz projektowaniem graficznym. Ukończyłam edukację artystyczną w zakresie sztuk plastycznych oraz obroniłam dyplom z litografii na Uniwersytecie Marii Curie Skłodowskiej w Lublinie.",
+  },
+  {
+    photo: author4.src,
+    mask: mask4.src,
+    maskW: 551,
+    maskH: 552,
+    name: "Katarzyna Zaremba",
+    gapClass: "pr-3",
+    desc: `A ja, krążę między tworzeniem a pokazywaniem - odnajduję się w obu tych przestrzeniach równie naturalnie. Pracuję solo, ale też w dwójkach, w trójkach, piątkach i dziesiątkach - lubię zmieniać perspektywę i dynamikę działania.<br><br>Tworzę na styku malarstwa i fotografii, łącząc je intuicyjnie i bez sztywnych podziałów. Interesują mnie napięcia, błędy i momenty, które wymykają się jednoznacznej interpretacji. Wychodzę od codzienności, rzeczy pozornie zwykłych. Prowadzę warsztaty i projekty, współtworzę wystawy — działam zarówno od strony koncepcji, jak i realizacji. Doceniam proces, wymianę i sytuacje, w których bardziej od dzieła liczy się działanie.<br><br>Ukończyłam malarstwo na Akademii Sztuk Pięknych w Łodzi.`,
   },
 ];
 ---
 
 <div style="clip-path: inset(0 -100vw -100vh 0)">
-  <section id="authors-section" class="py-24 w-full">
-    <div class="flex flex-col items-center w-full gap-y-16">
+  <section id="authors-section" class="py-24 w-full px-24">
+    <div class="flex flex-col items-center w-full max-w-350 mx-auto gap-y-16">
       {
         authors.map((author, i) => {
           const photoLeft = i % 2 === 0;
-          const w = Math.round(author.maskW * 0.82);
-          const h = Math.round(author.maskH * 0.82);
-          const maskCss = `mask-image:url(${author.mask});mask-size:contain;mask-repeat:no-repeat;mask-position:center;-webkit-mask-image:url(${author.mask});-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;-webkit-mask-position:center;`;
-          const shape = author.border
-            ? parseBorderShape(author.border, h)
-            : null;
+          const maskCss = `mask-image:url(${author.mask});mask-size:contain;mask-repeat:no-repeat;mask-position:top center;-webkit-mask-image:url(${author.mask});-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;-webkit-mask-position:top center;`;
 
           return (
             <div
-              class="flex flex-row items-start"
-              style="width:1100px;"
+              class="flex flex-row items-stretch"
+              class="w-full"
               data-author-index={i}
             >
               {photoLeft ? (
                 <>
                   <div
                     class="author-photo shrink-0"
-                    style={`width:${w}px;height:${h}px;`}
+                    style={`aspect-ratio:${author.maskW}/${author.maskH};min-height:${author.maskH}px;max-height:${author.maskH}px;${maskCss}`}
                   >
                     <img
                       src={author.photo}
                       alt={author.name}
-                      style={`width:100%;height:100%;object-fit:cover;${maskCss}`}
+                      style="width:100%;height:100%;object-fit:cover;object-position:right center;"
                     />
                   </div>
-                  {shape ? (
-                    <div
-                      class="author-text relative shrink-0"
-                      style={`width:${shape.width}px;height:${h}px;margin-left:-8px;`}
-                    >
-                      <div class="border-svg-layer absolute inset-0 pointer-events-none">
-                        <Fragment set:html={author.border} />
-                      </div>
-                      <div
-                        class="relative z-10 h-full py-8 pr-10 font-[Michroma]"
-                        style={shape.clipPath}
-                      >
-                        <div style={shape.floatStyle} />
-                        <p class="text-2xl leading-tight text-left">
-                          {author.name}
-                        </p>
-                        <p class="text-base text-[#00938A] mt-2 text-left">
-                          {author.title}
-                        </p>
-                        <p class="text-[14px] leading-7 mt-4 text-center">
-                          {author.desc}
-                        </p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div class="author-text font-[Michroma] pl-12 flex-1 text-center pt-16">
-                      <p class="text-2xl leading-tight text-left">
-                        {author.name}
-                      </p>
-                      <p class="text-base text-[#00938A] mt-2 text-left">
-                        {author.title}
-                      </p>
-                      <p class="font-[Michroma] text-[14px] leading-7 mt-4">
-                        {author.desc}
-                      </p>
-                    </div>
-                  )}
+                  <div
+                    class={`author-text font-[Michroma] ${author.gapClass} flex-1 max-w-2xl`}
+                  >
+                    <p class="text-2xl leading-tight">{author.name}</p>
+                    {author.title && (
+                      <p class="text-base text-black mt-2">{author.title}</p>
+                    )}
+                    <p
+                      class="text-[14px] leading-7 mt-12 text-left"
+                      set:html={author.desc}
+                    />
+                  </div>
                 </>
               ) : (
                 <>
-                  <div class="author-text font-[Michroma] pr-12 flex-1 text-center pt-16">
-                    <p class="text-2xl leading-tight text-left">
+                  <div
+                    class={`author-text font-[Michroma] ${author.gapClass} flex-1 max-w-2xl`}
+                  >
+                    <p class="text-2xl leading-tight text-right">
                       {author.name}
                     </p>
-                    <p class="text-base text-[#00938A] mt-2 text-left">
-                      {author.title}
-                    </p>
-                    <p class="font-[Michroma] text-[14px] leading-7 mt-4">
-                      {author.desc}
-                    </p>
+                    {author.title && (
+                      <p class="text-base text-black mt-2 text-right">
+                        {author.title}
+                      </p>
+                    )}
+                    <p
+                      class="text-[14px] leading-7 mt-12 text-left"
+                      set:html={author.desc}
+                    />
                   </div>
                   <div
                     class="author-photo shrink-0"
-                    style={`width:${w}px;height:${h}px;`}
+                    style={`aspect-ratio:${author.maskW}/${author.maskH};min-height:${author.maskH}px;max-height:${author.maskH}px;${maskCss}`}
                   >
                     <img
                       src={author.photo}
                       alt={author.name}
-                      style={`width:100%;height:100%;object-fit:cover;${maskCss}`}
+                      style="width:100%;height:100%;object-fit:cover;"
                     />
                   </div>
                 </>
@@ -212,14 +126,6 @@ const authors = [
     </div>
   </section>
 </div>
-
-<style>
-  /* make the raw SVG fill its wrapper div */
-  .border-svg-layer svg {
-    width: 100%;
-    height: 100%;
-  }
-</style>
 
 <script>
   function lerp(a: number, b: number, t: number) {
@@ -259,7 +165,13 @@ const authors = [
     };
   });
 
+  const SETTLE = 0.1;
+  let rafId = 0;
+
   function animate() {
+    rafId = 0;
+    let stillMoving = false;
+
     for (const s of state) {
       const p = easeOut(getProgress(s.row));
       const targetPhoto = lerp(s.photoDir * OFFSET, 0, p);
@@ -268,9 +180,22 @@ const authors = [
       s.textX = lerp(s.textX, targetText, LAG);
       s.photo.style.transform = `translateX(${s.photoX}px)`;
       s.text.style.transform = `translateX(${s.textX}px)`;
+
+      if (
+        Math.abs(s.photoX - targetPhoto) > SETTLE ||
+        Math.abs(s.textX - targetText) > SETTLE
+      ) {
+        stillMoving = true;
+      }
     }
-    requestAnimationFrame(animate);
+
+    if (stillMoving) rafId = requestAnimationFrame(animate);
   }
 
-  requestAnimationFrame(animate);
+  function scheduleAnimate() {
+    if (!rafId) rafId = requestAnimationFrame(animate);
+  }
+
+  window.addEventListener("scroll", scheduleAnimate, { passive: true });
+  scheduleAnimate();
 </script>
