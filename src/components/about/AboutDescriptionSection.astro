@@ -12,7 +12,7 @@ function svgInner(raw: string) {
 ---
 
 <section class="mt-26 flex flex-col text-left items-center text-4xl leading-13">
-  <div class="max-w-[75%] gap-y-9 flex flex-col font-[Michroma] text-2xl">
+  <div class="max-w-3xl gap-y-9 flex flex-col font-[Michroma] text-2xl">
     <div>
       <span class="doodle" id="doodle-1">Sztuka<svg
           class="doodle-svg doodle-around"
@@ -150,23 +150,11 @@ function svgInner(raw: string) {
 
     document.querySelectorAll(".doodle").forEach((el) => {
       const rect = el.getBoundingClientRect();
-      const start = window.innerHeight * 0.85;
-      const end = window.innerHeight * 0.35;
+      const start = window.innerHeight * 0.65;
+      const end = window.innerHeight * 0.2;
 
-      // Only activate once the element scrolls INTO range from below
-      // But if it's already above the start line on first frame, show it immediately
       if (!activated.has(el)) {
         if (rect.top > start) return; // not yet in range
-        if (rect.top < start && !scrolledDown && window.scrollY === 0) {
-          // Visible on page load — mark as fully drawn
-          activated.add(el);
-          el.querySelectorAll<SVGPathElement>(".doodle-svg path").forEach(
-            (path) => {
-              path.style.strokeDashoffset = "0";
-            },
-          );
-          return;
-        }
         activated.add(el);
       }
 
