@@ -5,19 +5,21 @@ import navbarLogo from "../assets/navbar-logo2.svg";
 <script>
   const COLORS = ["#00938A", "#826887", "#F7ADC5", "#F7CB1B", "#205245"];
 
-  document.querySelectorAll<HTMLElement>(".nav-link").forEach((link) => {
-    link.addEventListener("mouseenter", () => {
-      const color = COLORS[Math.floor(Math.random() * COLORS.length)];
-      const sign = Math.random() > 0.5 ? 1 : -1;
-      const deg = sign * (Math.random() * 8 + 5);
-      link.style.transform = `rotate(${deg}deg)`;
-      link.style.color = color;
+  function attachHoverListeners() {
+    document.querySelectorAll<HTMLElement>(".nav-link").forEach((link) => {
+      link.addEventListener("mouseenter", () => {
+        const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+        const sign = Math.random() > 0.5 ? 1 : -1;
+        const deg = sign * (Math.random() * 8 + 5);
+        link.style.transform = `rotate(${deg}deg)`;
+        link.style.color = color;
+      });
+      link.addEventListener("mouseleave", () => {
+        link.style.transform = "";
+        link.style.color = "";
+      });
     });
-    link.addEventListener("mouseleave", () => {
-      link.style.transform = "";
-      link.style.color = "";
-    });
-  });
+  }
 
   function updateNavbar() {
     const bg = document.getElementById("navbar-bg");
@@ -27,9 +29,13 @@ import navbarLogo from "../assets/navbar-logo2.svg";
     bg.style.backdropFilter = t > 0 ? `blur(${(t * 8).toFixed(1)}px)` : "none";
   }
 
+  attachHoverListeners();
   updateNavbar();
   window.addEventListener("scroll", updateNavbar, { passive: true });
-  document.addEventListener("astro:page-load", updateNavbar);
+  document.addEventListener("astro:page-load", () => {
+    attachHoverListeners();
+    updateNavbar();
+  });
 </script>
 
 <nav
