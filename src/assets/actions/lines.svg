@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Warstwa_1" data-name="Warstwa 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 618.06 1252.26">
+  <defs>
+    <style>
+      .cls-1 {
+        isolation: isolate;
+      }
+
+      .cls-2 {
+        stroke: #000;
+      }
+
+      .cls-2, .cls-3, .cls-4 {
+        stroke-miterlimit: 10;
+        stroke-width: .5px;
+      }
+
+      .cls-2, .cls-4 {
+        fill: none;
+      }
+
+      .cls-3, .cls-4 {
+        stroke: #205245;
+      }
+    </style>
+  </defs>
+  <g class="cls-1">
+    <g id="Warstwa_1-2" data-name="Warstwa 1-2">
+      <line class="cls-2" x1="167.88" y1=".76" x2="167.88" y2="773.53"/>
+      <line class="cls-2" x1="176.63" y1=".76" x2="176.63" y2="774.44"/>
+      <line class="cls-2" x1="199.73" x2="199.73" y2="781.46"/>
+      <line class="cls-2" x1="250.31" y1=".76" x2="250.31" y2="785.51"/>
+      <line class="cls-2" x1="242.81" y1=".76" x2="242.81" y2="785.51"/>
+      <path class="cls-3" d="M327.74.76v763.97"/>
+      <line class="cls-4" x1="346.47" y1=".76" x2="346.47" y2="780.28"/>
+      <line class="cls-4" x1="412.66" y1=".76" x2="412.66" y2="771.24"/>
+      <line class="cls-4" x1=".05" y1="96.88" x2="595.33" y2="96.88"/>
+      <line class="cls-4" x1=".05" y1="183.61" x2="595.33" y2="135.66"/>
+      <path class="cls-4" d="M.05,267.86s260.53,46.21,267.01,35.63c17.8-29.07,350.94,58.27,350.94,58.27"/>
+      <line class="cls-4" x1=".05" y1="432.25" x2="595.33" y2="432.25"/>
+      <line class="cls-4" x1=".05" y1="479.38" x2="595.33" y2="446.34"/>
+      <line class="cls-4" x1=".05" y1="583.36" x2="595.33" y2="704.12"/>
+    </g>
+  </g>
+</svg>
