@@ -4,6 +4,11 @@ import PageFooter from "../components/PageFooter.astro";
 import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
 import PageNavbar from "../components/PageNavbar.astro";
+
+interface Props {
+  invertedStar?: boolean;
+}
+const { invertedStar = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -18,11 +23,19 @@ import PageNavbar from "../components/PageNavbar.astro";
     <ClientRouter />
   </head>
   <body class="pt-20">
+    <div id="bloom-overlay" style="display:none;position:fixed;inset:0;z-index:9999;pointer-events:none;"></div>
     <PageNavbar />
     <slot />
-    <PageFooter />
+    <PageFooter invertedStar={invertedStar} />
   </body>
 </html>
+
+<script>
+  import { initBloomTransition } from "../scripts/flowerTransition";
+  // Run on initial load + every Astro page swap
+  initBloomTransition();
+  document.addEventListener("astro:after-swap", initBloomTransition);
+</script>
 
 <style>
   html,

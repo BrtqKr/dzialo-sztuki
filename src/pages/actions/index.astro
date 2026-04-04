@@ -1,0 +1,70 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+---
+
+<PageLayout invertedStar>
+  <div id="plant-scroll" style="height: 500vh; position: relative;">
+    <div
+      id="plant-sticky"
+      style="position: sticky; top: 0; height: 100vh; overflow: hidden;"
+    >
+      <!-- SVG injected by script after fetch -->
+    </div>
+  </div>
+</PageLayout>
+
+<style>
+  /* Actions page: SVG fills from the very top, behind the transparent navbar */
+  :global(body:has(#plant-scroll)) {
+    padding-top: 0;
+  }
+
+  /* No gap between plant scroll and footer — dark band blends into footer's bg-black */
+  :global(body:has(#plant-scroll) footer) {
+    margin-top: 0;
+    border-top: 1px solid #f5f5f5;
+  }
+
+  #plant-sticky {
+    contain: layout style paint;
+  }
+  #plant-sticky svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    will-change: transform;
+  }
+</style>
+
+<script>
+  import {
+    initPlantAnimation,
+    restoreScroll,
+    teardown,
+  } from "../../scripts/plantAnimation";
+
+  async function setup() {
+    const container = document.getElementById("plant-sticky");
+    if (!container) return;
+
+    if (!container.querySelector("svg")) {
+      const res = await fetch("/full-plant2.svg");
+      container.innerHTML = await res.text();
+    }
+
+    initPlantAnimation();
+
+    // Restore scroll + animation state when returning from a flower page
+    const savedY = sessionStorage.getItem("plantScrollY");
+    if (savedY) {
+      sessionStorage.removeItem("plantScrollY");
+      // Call after one rAF so ScrollTrigger has registered its bounds
+      requestAnimationFrame(() => restoreScroll(parseFloat(savedY)));
+    }
+
+    // Destroy Lenis + reset scroll before leaving this page
+    document.addEventListener("astro:before-swap", teardown, { once: true });
+  }
+
+  document.addEventListener("astro:page-load", setup);
+</script>

@@ -7,40 +7,49 @@ import starRaw from "../../assets/home/star.svg?raw";
 </div>
 
 <script>
-  const pupil1 = document.getElementById("pupil1");
-  const pupil2 = document.getElementById("pupil2");
+  const MAX_MOVE = 15;
+  const LERP = 0.08;
+  const NEAR_INNER = 40;
+  const NEAR_RANGE = 40;
+  const MID_INNER = 50;
+  const MID_RANGE = 100;
 
-  if (pupil1 && pupil2) {
-    const MAX_MOVE = 15;
-    const LERP = 0.08;
-    const NEAR_INNER = 40;
-    const NEAR_RANGE = 40;
-    const MID_INNER = 50;
-    const MID_RANGE = 100;
+  let mouseX = window.innerWidth / 2;
+  let mouseY = window.innerHeight / 2;
+  let rafId: number | null = null;
 
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
+  function onMouseMove(e: MouseEvent) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  }
+
+  function lerp(a: number, b: number, t: number) {
+    return a + (b - a) * t;
+  }
+
+  function fade(v: number, inner: number, range: number) {
+    return Math.max(0, Math.min(1, (v - inner) / range));
+  }
+
+  function setup() {
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+
+    const pupil1 = document.getElementById("pupil1");
+    const pupil2 = document.getElementById("pupil2");
+    if (!pupil1 || !pupil2) return;
 
     const off1 = { x: 0, y: 0 };
     const off2 = { x: 0, y: 0 };
 
-    document.addEventListener("mousemove", (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    });
-
-    function lerp(a: number, b: number, t: number) {
-      return a + (b - a) * t;
-    }
-
-    function fade(v: number, inner: number, range: number) {
-      return Math.max(0, Math.min(1, (v - inner) / range));
-    }
+    document.removeEventListener("mousemove", onMouseMove);
+    document.addEventListener("mousemove", onMouseMove);
 
     function animate() {
-      if (!pupil1 || !pupil2) return;
-      const r1 = pupil1.getBoundingClientRect();
-      const r2 = pupil2.getBoundingClientRect();
+      const r1 = pupil1!.getBoundingClientRect();
+      const r2 = pupil2!.getBoundingClientRect();
 
       const rx1 = r1.left + r1.width / 2 - off1.x;
       const ry1 = r1.top + r1.height / 2 - off1.y;
@@ -76,12 +85,15 @@ import starRaw from "../../assets/home/star.svg?raw";
       off2.x = lerp(off2.x, t2x, LERP);
       off2.y = lerp(off2.y, t2y, LERP);
 
-      pupil1.style.transform = `translate(${off1.x}px, ${off1.y}px)`;
-      pupil2.style.transform = `translate(${off2.x}px, ${off2.y}px)`;
+      pupil1!.style.transform = `translate(${off1.x}px, ${off1.y}px)`;
+      pupil2!.style.transform = `translate(${off2.x}px, ${off2.y}px)`;
 
-      requestAnimationFrame(animate);
+      rafId = requestAnimationFrame(animate);
     }
 
-    animate();
+    rafId = requestAnimationFrame(animate);
   }
+
+  setup();
+  document.addEventListener("astro:page-load", setup);
 </script>

@@ -4,6 +4,12 @@ import Instagram from "../assets/instagram.svg";
 import Linkedin from "../assets/linkedin.svg";
 import Facebook from "../assets/facebook.svg";
 import FooterStar from "../assets/footer-star.svg";
+import FooterStarInverted from "../assets/footer-star-inverted.svg";
+
+interface Props {
+  invertedStar?: boolean;
+}
+const { invertedStar = false } = Astro.props;
 ---
 
 <div class="relative z-10">
@@ -27,7 +33,10 @@ import FooterStar from "../assets/footer-star.svg";
       </div>
     </div>
     <div class="relative text-white p-8 flex flex-col gap-y-4">
-      <FooterStar class="absolute bottom-full left-1/2 -translate-x-1/2" />
+      {invertedStar
+        ? <FooterStarInverted class="absolute bottom-full left-1/2 -translate-x-1/2" />
+        : <FooterStar class="absolute bottom-full left-1/2 -translate-x-1/2" />
+      }
       <div>Zaobserwuj nas<br />@dzialosztuki</div>
       <div class="flex flex-row gap-x-4">
         <Instagram />
