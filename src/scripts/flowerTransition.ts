@@ -53,7 +53,9 @@ export function bloomOut(
 
   // Persist for the destination page's collapse animation
   sessionStorage.setItem("bloomTransition", "1");
-  sessionStorage.setItem("plantScrollY", String(window.scrollY));
+  if (window.location.pathname === "/actions") {
+    sessionStorage.setItem("plantScrollY", String(window.scrollY));
+  }
 
   overlay.style.cssText = `
     position: fixed; inset: 0; z-index: 9999;
