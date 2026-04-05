@@ -1,7 +1,7 @@
 ---
 import PageLayout from "../../layouts/PageLayout.astro";
+import ContactMobile from "../../components/contact/ContactMobile.astro";
 import wrapperRaw from "../../assets/contact/contact-wrapper.svg?raw";
-import starRaw from "../../assets/home/star.svg?raw";
 import arrow1Raw from "../../assets/contact/arrow1.svg?raw";
 import arrow2Raw from "../../assets/contact/arrow2.svg?raw";
 
@@ -70,85 +70,5 @@ const svgWithContent = wrapperRaw.replace(
     </div>
   </section>
 
-  <!-- Mobile layout -->
-  <section
-    class="md:hidden flex flex-col min-h-screen px-5 pt-6 pb-10 font-[Michroma]"
-  >
-    <!-- Squiggly border frame -->
-    <div class="relative flex-1 flex flex-col">
-      <!-- SVG squiggly border -->
-      <svg
-        class="absolute inset-0 w-full h-full pointer-events-none"
-        preserveAspectRatio="none"
-      >
-        <defs>
-          <filter
-            id="squiggly-border"
-            x="-5%"
-            y="-5%"
-            width="110%"
-            height="110%"
-          >
-            <feTurbulence
-              type="fractalNoise"
-              baseFrequency="0.03"
-              numOctaves="3"
-              seed="5"
-              result="noise"></feTurbulence>
-            <feDisplacementMap
-              in="SourceGraphic"
-              in2="noise"
-              scale="4"
-              xChannelSelector="R"
-              yChannelSelector="G"></feDisplacementMap>
-          </filter>
-        </defs>
-        <rect
-          x="2"
-          y="2"
-          width="calc(100% - 4px)"
-          height="calc(100% - 4px)"
-          fill="none"
-          stroke="black"
-          stroke-width="2.5"
-          filter="url(#squiggly-border)"></rect>
-      </svg>
-
-      <!-- Contact content -->
-      <div class="relative z-10 flex flex-col gap-y-8 px-8 py-10">
-        <div>
-          <p class="text-sm text-gray-500 mb-1">Tu możemy się zdzwonić</p>
-          <a href="tel:+48786610807" class="text-xl underline decoration-[#f7adc5] decoration-2 underline-offset-4 transition-opacity hover:opacity-60">+48 786 610 807</a>
-        </div>
-        <div>
-          <p class="text-sm text-gray-500 mb-1">
-            Tu możesz napisać do nas maila
-          </p>
-          <a href="mailto:dzialosztukifundacja@gmail.com" class="text-base break-all underline decoration-[#00938A] decoration-2 underline-offset-4 transition-opacity hover:opacity-60">dzialosztukifundacja@gmail.com</a>
-        </div>
-        <div>
-          <p class="text-sm text-gray-500 mb-1">
-            A tutaj przyjmujemy gołębie pocztowe
-          </p>
-          <p class="text-sm text-gray-500 mb-1">(adres do korespondencji):</p>
-          <p class="text-xl" style="color:#00938A;">Piotrkowska 276A,</p>
-          <p class="text-xl" style="color:#00938A;">90-361 Łódź</p>
-        </div>
-        <div>
-          <p class="text-xl">Halo,</p>
-          <p class="text-xl">CENTRALO!</p>
-        </div>
-      </div>
-
-      <!-- Star character at bottom of frame -->
-      <div
-        class="relative z-10 mt-auto flex justify-center overflow-hidden"
-        style="height:220px;"
-      >
-        <div class="absolute bottom-[-10%] w-[90%]">
-          <Fragment set:html={starRaw} />
-        </div>
-      </div>
-    </div>
-  </section>
+  <ContactMobile />
 </PageLayout>

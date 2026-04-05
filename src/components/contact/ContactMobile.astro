@@ -1,0 +1,50 @@
+---
+import wrapperRaw from "../../assets/contact/contact-mobile-wrapper.svg?raw";
+import arrow3Raw from "../../assets/contact/arrow3.svg?raw";
+
+const arrow3 = arrow3Raw
+  .replace(/\s*width="[^"]*"/, "")
+  .replace(/\s*height="[^"]*"/, "")
+  .replace(
+    "<svg ",
+    `<svg style="flex-shrink:0;width:72px;height:10px;align-self:center;" `,
+  );
+
+const svgWithContent = wrapperRaw.replace(
+  "</svg>",
+  `<foreignObject x="25" y="40" width="415" height="440">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;font-family:Michroma,sans-serif;font-size:16px;line-height:1.2;padding:0 32px 0 40px;box-sizing:border-box;display:flex;flex-direction:column;">
+
+        <!-- Phone -->
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+          <p style="margin:0 0 8px 0;">Tu możemy się zdzwonić:</p>
+          <div style="display:flex;align-items:center;gap:14px;">
+            <a href="tel:+48786610807" style="color:#000000;text-decoration:underline;text-decoration-color:#f7adc5;text-underline-offset:4px;text-decoration-thickness:2px;white-space:nowrap;">+48 786 610 807</a>
+            ${arrow3}
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+          <p style="margin:0 0 8px 0;">Tu możesz napisać do nas maila:</p>
+          <a href="mailto:dzialosztukifundacja@gmail.com" style="color:#000000;text-decoration:underline;text-decoration-color:#00938A;text-underline-offset:4px;text-decoration-thickness:2px;word-break:break-all;">dzialosztukifundacja@gmail.com</a>
+        </div>
+
+        <!-- Address -->
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+          <p style="margin:0;">A tu przyjmujemy gołębie pocztowe</p>
+          <p style="margin:0 0 8px 0;">(adres do korespondencji):</p>
+          <p style="margin:0;color:#00938A;">Piotrkowska 276A, 90-361 Łódź</p>
+        </div>
+
+    </div>
+  </foreignObject>
+</svg>`,
+);
+---
+
+<section class="md:hidden px-5 pt-6 pb-10">
+  <div class="w-full [&>svg]:w-full [&>svg]:h-auto">
+    <Fragment set:html={svgWithContent} />
+  </div>
+</section>
