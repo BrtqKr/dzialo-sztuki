@@ -17,13 +17,17 @@ const { invertedStar = false } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="alternate icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
     <title>Astro Basics</title>
     <ClientRouter />
   </head>
   <body class="pt-20">
-    <div id="bloom-overlay" style="display:none;position:fixed;inset:0;z-index:9999;pointer-events:none;"></div>
+    <div
+      id="bloom-overlay"
+      style="display:none;position:fixed;inset:0;z-index:9999;pointer-events:none;"
+    >
+    </div>
     <PageNavbar />
     <slot />
     <PageFooter invertedStar={invertedStar} />

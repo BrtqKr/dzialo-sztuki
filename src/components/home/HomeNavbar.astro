@@ -1,12 +1,14 @@
 ---
 import navbarLogo from "../../assets/navbar-logo.svg";
+import MobileNavOverlay from "../MobileNavOverlay.astro";
 ---
 
 <script>
-  const COLORS = ["#00938A", "#826887", "#F7ADC5", "#F7CB1B", "#205245"];
+  const COLORS = ["#F7CB1B", "#F5F5F5", "#F7ADC5", "#00938A", "#826887"];
 
   function attachHoverListeners() {
     document.querySelectorAll<HTMLElement>(".nav-link").forEach((link) => {
+      if (link.closest("#mobile-nav-overlay")) return;
       link.addEventListener("mouseenter", () => {
         const color = COLORS[Math.floor(Math.random() * COLORS.length)];
         const sign = Math.random() > 0.5 ? 1 : -1;
@@ -25,20 +27,35 @@ import navbarLogo from "../../assets/navbar-logo.svg";
   document.addEventListener("astro:page-load", attachHoverListeners);
 </script>
 
-<nav class="relative flex flex-row py-6 h-36 pb-8 px-32 items-center mb-5">
-  <div
-    class="flex flex-row gap-x-16 uppercase text-[2.5rem] font-[CuteFont] flex-1 justify-start"
-  >
+<!-- Desktop navbar -->
+<nav class="hidden md:flex relative flex-row py-6 h-36 pb-8 items-center mb-5">
+  <div class="flex flex-row gap-x-16 uppercase text-[2.5rem] font-[CuteFont] flex-1 justify-end pr-[clamp(60px,6vw,80px)]">
     <a href="/about" class="nav-link text-nowrap">O nas</a>
     <a href="/offer" class="nav-link text-nowrap">Oferta</a>
   </div>
-  <a href="/" class="absolute left-1/2 -translate-x-1/2">
+  <a href="/" class="flex-shrink-0">
     <img src={navbarLogo.src} alt="Logo" width="139" height="55" />
   </a>
-  <div
-    class="flex flex-row gap-x-16 uppercase text-[2.5rem] font-[CuteFont] flex-1 justify-end"
-  >
+  <div class="flex flex-row gap-x-16 uppercase text-[2.5rem] font-[CuteFont] flex-1 justify-start pl-[clamp(60px,6vw,80px)]">
     <a href="/actions" class="nav-link text-nowrap">Dzialania</a>
     <a href="/contact" class="nav-link text-nowrap">Kontakt</a>
   </div>
 </nav>
+
+<!-- Mobile navbar -->
+<nav class="md:hidden flex flex-row h-20 px-6 items-center justify-between">
+  <a href="/">
+    <img src={navbarLogo.src} alt="Logo" width="104" height="47" />
+  </a>
+  <button
+    data-hamburger
+    class="hamburger-btn flex flex-col gap-y-[6px] justify-center items-center w-10 h-10"
+    aria-label="Menu"
+  >
+    <span class="ham-top block w-7 h-0.5 bg-black transition-all duration-300 origin-center"></span>
+    <span class="ham-mid block w-7 h-0.5 bg-black transition-all duration-300"></span>
+    <span class="ham-bot block w-7 h-0.5 bg-black transition-all duration-300 origin-center"></span>
+  </button>
+</nav>
+
+<MobileNavOverlay logoSrc={navbarLogo.src} logoWidth={104} logoHeight={47} />

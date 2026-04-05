@@ -51,8 +51,8 @@ const authors = [
 ---
 
 <div style="clip-path: inset(0 -100vw -100vh 0)">
-  <section id="authors-section" class="py-24 w-full px-24">
-    <div class="flex flex-col items-center w-full max-w-350 mx-auto gap-y-16">
+  <section id="authors-section" class="py-12 md:py-24 w-full px-5 md:px-24">
+    <div class="flex flex-col items-center w-full max-w-350 mx-auto gap-y-10 md:gap-y-16">
       {
         authors.map((author, i) => {
           const photoLeft = i % 2 === 0;
@@ -127,6 +127,33 @@ const authors = [
   </section>
 </div>
 
+<style>
+  /* Mobile: column layout, no animation */
+  @media (max-width: 767px) {
+    [data-author-index] {
+      flex-direction: column !important;
+      align-items: center !important;
+    }
+    .author-photo {
+      min-height: 0 !important;
+      max-height: 240px !important;
+      width: 60% !important;
+      flex-shrink: 1 !important;
+      transform: none !important;
+      margin-bottom: 1.25rem;
+    }
+    .author-text {
+      width: 100% !important;
+      transform: none !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+    .author-text p[class*="text-right"] {
+      text-align: left !important;
+    }
+  }
+</style>
+
 <script>
   function lerp(a: number, b: number, t: number) {
     return a + (b - a) * t;
@@ -140,6 +167,9 @@ const authors = [
     const end = window.innerHeight * endFrac;
     return Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
   }
+
+  // Skip scroll animation on mobile — CSS handles stacked layout, no translateX needed
+  if (window.innerWidth >= 768) {
 
   const OFFSET = 280;
   const LAG = 0.07;
@@ -198,4 +228,6 @@ const authors = [
 
   window.addEventListener("scroll", scheduleAnimate, { passive: true });
   scheduleAnimate();
+
+  } // end desktop-only block
 </script>

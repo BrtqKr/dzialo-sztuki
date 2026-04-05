@@ -1,12 +1,14 @@
 ---
 import navbarLogo from "../assets/navbar-logo2.svg";
+import MobileNavOverlay from "./MobileNavOverlay.astro";
 ---
 
 <script>
-  const COLORS = ["#00938A", "#826887", "#F7ADC5", "#F7CB1B", "#205245"];
+  const COLORS = ["#F7CB1B", "#F7ADC5", "#00938A", "#826887"];
 
   function attachHoverListeners() {
     document.querySelectorAll<HTMLElement>(".nav-link").forEach((link) => {
+      if (link.closest("#mobile-nav-overlay")) return;
       link.addEventListener("mouseenter", () => {
         const color = COLORS[Math.floor(Math.random() * COLORS.length)];
         const sign = Math.random() > 0.5 ? 1 : -1;
@@ -40,10 +42,10 @@ import navbarLogo from "../assets/navbar-logo2.svg";
 
 <nav
   id="main-navbar"
-  class="fixed top-0 left-0 right-0 z-50 h-20 px-12 flex flex-row items-center justify-between"
+  class="fixed top-0 left-0 right-0 z-50 h-20 px-6 md:px-12 flex flex-row items-center justify-between"
 >
   <div id="navbar-bg" class="absolute inset-0 pointer-events-none"></div>
-  <a href="/" class="relative">
+  <a href="/" class="relative z-10">
     <img
       src={navbarLogo.src}
       alt="Logo"
@@ -52,12 +54,32 @@ import navbarLogo from "../assets/navbar-logo2.svg";
       style="flex-shrink:0;aspect-ratio:238/126"
     />
   </a>
+
+  <!-- Desktop nav links -->
   <div
-    class="relative flex flex-row gap-x-12 uppercase text-lg font-[Michroma] items-center"
+    class="relative hidden md:flex flex-row gap-x-12 uppercase text-lg font-[Michroma] items-center"
   >
     <a href="/about" class="nav-link text-nowrap">O nas</a>
     <a href="/offer" class="nav-link text-nowrap">Oferta</a>
     <a href="/actions" class="nav-link text-nowrap">Dzialania</a>
     <a href="/contact" class="nav-link text-nowrap">Kontakt</a>
   </div>
+
+  <!-- Hamburger button (mobile only) -->
+  <button
+    data-hamburger
+    class="relative z-10 md:hidden hamburger-btn flex flex-col gap-y-[6px] justify-center items-center w-10 h-10"
+    aria-label="Menu"
+  >
+    <span
+      class="ham-top block w-7 h-0.5 bg-black transition-all duration-300 origin-center"
+    ></span>
+    <span class="ham-mid block w-7 h-0.5 bg-black transition-all duration-300"
+    ></span>
+    <span
+      class="ham-bot block w-7 h-0.5 bg-black transition-all duration-300 origin-center"
+    ></span>
+  </button>
 </nav>
+
+<MobileNavOverlay logoSrc={navbarLogo.src} logoWidth={104} logoHeight={55} />
