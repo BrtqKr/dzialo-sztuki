@@ -168,66 +168,81 @@ const authors = [
     return Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
   }
 
-  // Skip scroll animation on mobile — CSS handles stacked layout, no translateX needed
-  if (window.innerWidth >= 768) {
+  function initAuthorsAnimation() {
+    // Skip scroll animation on mobile — CSS handles stacked layout, no translateX needed
+    if (window.innerWidth < 768) return;
 
-  const OFFSET = 280;
-  const LAG = 0.07;
+    const OFFSET = 280;
+    const LAG = 0.07;
+    const SETTLE = 0.1;
 
-  const rows = document.querySelectorAll<HTMLElement>("[data-author-index]");
+    const rows = document.querySelectorAll<HTMLElement>("[data-author-index]");
+    if (!rows.length) return;
 
-  const state = Array.from(rows).map((row, i) => {
-    const photoLeft = i % 2 === 0;
-    const photo = row.querySelector<HTMLElement>(".author-photo")!;
-    const text = row.querySelector<HTMLElement>(".author-text")!;
-    const photoDir = photoLeft ? -1 : 1;
-    const textDir = photoLeft ? 1 : -1;
-    photo.style.transform = `translateX(${photoDir * OFFSET}px)`;
-    text.style.transform = `translateX(${textDir * OFFSET}px)`;
-    return {
-      row,
-      photo,
-      text,
-      photoDir,
-      textDir,
-      photoX: photoDir * OFFSET,
-      textX: textDir * OFFSET,
-    };
-  });
+    const state = Array.from(rows).map((row, i) => {
+      const photoLeft = i % 2 === 0;
+      const photo = row.querySelector<HTMLElement>(".author-photo")!;
+      const text = row.querySelector<HTMLElement>(".author-text")!;
+      const photoDir = photoLeft ? -1 : 1;
+      const textDir = photoLeft ? 1 : -1;
+      photo.style.transform = `translateX(${photoDir * OFFSET}px)`;
+      text.style.transform = `translateX(${textDir * OFFSET}px)`;
+      return {
+        row,
+        photo,
+        text,
+        photoDir,
+        textDir,
+        photoX: photoDir * OFFSET,
+        textX: textDir * OFFSET,
+      };
+    });
 
-  const SETTLE = 0.1;
-  let rafId = 0;
+    let rafId = 0;
 
-  function animate() {
-    rafId = 0;
-    let stillMoving = false;
+    function animate() {
+      rafId = 0;
+      let stillMoving = false;
 
-    for (const s of state) {
-      const p = easeOut(getProgress(s.row));
-      const targetPhoto = lerp(s.photoDir * OFFSET, 0, p);
-      const targetText = lerp(s.textDir * OFFSET, 0, p);
-      s.photoX = lerp(s.photoX, targetPhoto, LAG);
-      s.textX = lerp(s.textX, targetText, LAG);
-      s.photo.style.transform = `translateX(${s.photoX}px)`;
-      s.text.style.transform = `translateX(${s.textX}px)`;
+      for (const s of state) {
+        const p = easeOut(getProgress(s.row));
+        const targetPhoto = lerp(s.photoDir * OFFSET, 0, p);
+        const targetText = lerp(s.textDir * OFFSET, 0, p);
+        s.photoX = lerp(s.photoX, targetPhoto, LAG);
+        s.textX = lerp(s.textX, targetText, LAG);
+        s.photo.style.transform = `translateX(${s.photoX}px)`;
+        s.text.style.transform = `translateX(${s.textX}px)`;
 
-      if (
-        Math.abs(s.photoX - targetPhoto) > SETTLE ||
-        Math.abs(s.textX - targetText) > SETTLE
-      ) {
-        stillMoving = true;
+        if (
+          Math.abs(s.photoX - targetPhoto) > SETTLE ||
+          Math.abs(s.textX - targetText) > SETTLE
+        ) {
+          stillMoving = true;
+        }
       }
+
+      if (stillMoving) rafId = requestAnimationFrame(animate);
     }
 
-    if (stillMoving) rafId = requestAnimationFrame(animate);
+    function scheduleAnimate() {
+      if (!rafId) rafId = requestAnimationFrame(animate);
+    }
+
+    window.addEventListener("scroll", scheduleAnimate, { passive: true });
+    scheduleAnimate();
+
+    document.addEventListener(
+      "astro:before-swap",
+      () => {
+        window.removeEventListener("scroll", scheduleAnimate);
+        if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = 0;
+        }
+      },
+      { once: true },
+    );
   }
 
-  function scheduleAnimate() {
-    if (!rafId) rafId = requestAnimationFrame(animate);
-  }
-
-  window.addEventListener("scroll", scheduleAnimate, { passive: true });
-  scheduleAnimate();
-
-  } // end desktop-only block
+  document.addEventListener("astro:page-load", initAuthorsAnimation);
 </script>
