@@ -27,7 +27,7 @@ import MobileNavOverlay from "./MobileNavOverlay.astro";
     const bg = document.getElementById("navbar-bg");
     if (!bg) return;
     const t = Math.min(window.scrollY / 150, 1);
-    bg.style.backgroundColor = `rgba(255,255,255,${(t * 0.65).toFixed(3)})`;
+    bg.style.backgroundColor = `rgba(245,245,245,${(t * 0.65).toFixed(3)})`;
     bg.style.backdropFilter = t > 0 ? `blur(${(t * 8).toFixed(1)}px)` : "none";
   }
 

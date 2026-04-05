@@ -11,146 +11,148 @@ const tabs = [
 ---
 
 <script>
-  const buttons = document.querySelectorAll<HTMLElement>("[data-tab]");
-  const panels = document.querySelectorAll<HTMLElement>("[data-panel]");
-  const inner = document.querySelector<HTMLElement>(".tab-panels-inner");
+  function initTabs() {
+    const buttons = document.querySelectorAll<HTMLElement>("[data-tab]");
+    const panels = document.querySelectorAll<HTMLElement>("[data-panel]");
+    const inner = document.querySelector<HTMLElement>(".tab-panels-inner");
 
-  const FADE = 350;
-  let switching = false;
-  let firstRun = true;
+    if (!buttons.length) return;
 
-  // Active panel stays position:relative (natural height).
-  // Inactive panels are position:absolute so they don't affect layout.
-  function setActive(panel: HTMLElement) {
-    panel.style.position = "relative";
-    panel.dataset.panelActive = "true";
-  }
+    const FADE = 350;
+    let switching = false;
+    let firstRun = true;
 
-  function setInactive(panel: HTMLElement) {
-    panel.style.position = "absolute";
-    delete panel.dataset.panelActive;
-  }
+    function setActive(panel: HTMLElement) {
+      panel.style.position = "relative";
+      panel.dataset.panelActive = "true";
+    }
 
-  function animateIn(panel: HTMLElement) {
-    const children = Array.from(panel.children) as HTMLElement[];
-    const textEls = children.filter((el) => el.tagName !== "IMG");
-    const imgEl = children.find((el) => el.tagName === "IMG") ?? null;
+    function setInactive(panel: HTMLElement) {
+      panel.style.position = "absolute";
+      delete panel.dataset.panelActive;
+    }
 
-    [...textEls, ...(imgEl ? [imgEl] : [])].forEach((el) => {
-      el.style.transition = "none";
-      el.style.opacity = "0";
-    });
+    function animateIn(panel: HTMLElement) {
+      const children = Array.from(panel.children) as HTMLElement[];
+      const textEls = children.filter((el) => el.tagName !== "IMG");
+      const imgEl = children.find((el) => el.tagName === "IMG") ?? null;
 
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => {
-        textEls.forEach((el) => {
-          el.style.transition = `opacity ${FADE}ms ease-in-out`;
-          el.style.opacity = "1";
-        });
-        setTimeout(() => {
-          if (imgEl) {
-            imgEl.style.transition = `opacity ${FADE}ms ease-in-out`;
-            imgEl.style.opacity = "1";
-          }
-        }, FADE);
-      }),
-    );
-  }
-
-  function activate(id: string) {
-    buttons.forEach((btn) => {
-      btn.dataset.active = btn.dataset.tab === id ? "true" : "false";
-    });
-
-    const next = document.querySelector<HTMLElement>(`[data-panel="${id}"]`);
-    if (!next) return;
-
-    if (firstRun) {
-      panels.forEach((panel) => {
-        const active = panel.dataset.panel === id;
-        panel.style.opacity = active ? "1" : "0";
-        panel.style.pointerEvents = active ? "auto" : "none";
-        if (active) setActive(panel); else setInactive(panel);
+      [...textEls, ...(imgEl ? [imgEl] : [])].forEach((el) => {
+        el.style.transition = "none";
+        el.style.opacity = "0";
       });
-      animateIn(next);
-      firstRun = false;
-      return;
+
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          textEls.forEach((el) => {
+            el.style.transition = `opacity ${FADE}ms ease-in-out`;
+            el.style.opacity = "1";
+          });
+          setTimeout(() => {
+            if (imgEl) {
+              imgEl.style.transition = `opacity ${FADE}ms ease-in-out`;
+              imgEl.style.opacity = "1";
+            }
+          }, FADE);
+        }),
+      );
     }
 
-    if (switching) return;
+    function activate(id: string) {
+      buttons.forEach((btn) => {
+        btn.dataset.active = btn.dataset.tab === id ? "true" : "false";
+      });
 
-    const current = Array.from(panels).find(
-      (p) => p.dataset.panelActive === "true" && p.dataset.panel !== id,
-    );
+      const next = document.querySelector<HTMLElement>(`[data-panel="${id}"]`);
+      if (!next) return;
 
-    if (!current || current === next) {
-      setActive(next);
-      next.style.opacity = "1";
-      next.style.pointerEvents = "auto";
-      animateIn(next);
-      return;
-    }
+      if (firstRun) {
+        panels.forEach((panel) => {
+          const active = panel.dataset.panel === id;
+          panel.style.opacity = active ? "1" : "0";
+          panel.style.pointerEvents = active ? "auto" : "none";
+          if (active) setActive(panel);
+          else setInactive(panel);
+        });
+        animateIn(next);
+        firstRun = false;
+        return;
+      }
 
-    switching = true;
+      if (switching) return;
 
-    // Lock container height so nothing jumps when current becomes absolute
-    if (inner) inner.style.height = inner.offsetHeight + "px";
+      const current = Array.from(panels).find(
+        (p) => p.dataset.panelActive === "true" && p.dataset.panel !== id,
+      );
 
-    // Move current to absolute (it was relative, holding height)
-    setInactive(current);
-
-    // Prepare next: absolute, invisible
-    next.style.transition = "none";
-    next.style.opacity = "0";
-    // next is already absolute; bring it to front
-    next.style.zIndex = "1";
-    current.style.zIndex = "0";
-
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => {
-        current.style.transition = `opacity ${FADE}ms ease-in-out`;
-        current.style.opacity = "0";
-        current.style.pointerEvents = "none";
-
-        next.style.transition = `opacity ${FADE}ms ease-in-out`;
+      if (!current || current === next) {
+        setActive(next);
         next.style.opacity = "1";
         next.style.pointerEvents = "auto";
-
         animateIn(next);
+        return;
+      }
 
-        setTimeout(() => {
-          // Next becomes the new relative anchor, release locked height
-          setActive(next);
-          next.style.zIndex = "";
-          current.style.zIndex = "";
-          if (inner) inner.style.height = "";
-          switching = false;
-        }, FADE * 2);
-      }),
+      switching = true;
+      if (inner) inner.style.height = inner.offsetHeight + "px";
+      setInactive(current);
+
+      next.style.transition = "none";
+      next.style.opacity = "0";
+      next.style.zIndex = "1";
+      current.style.zIndex = "0";
+
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          current.style.transition = `opacity ${FADE}ms ease-in-out`;
+          current.style.opacity = "0";
+          current.style.pointerEvents = "none";
+
+          next.style.transition = `opacity ${FADE}ms ease-in-out`;
+          next.style.opacity = "1";
+          next.style.pointerEvents = "auto";
+
+          animateIn(next);
+
+          setTimeout(() => {
+            setActive(next);
+            next.style.zIndex = "";
+            current.style.zIndex = "";
+            if (inner) inner.style.height = "";
+            switching = false;
+          }, FADE * 2);
+        }),
+      );
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        window.location.hash = btn.dataset.tab!;
+      });
+    });
+
+    function activateFromHash() {
+      const hash = window.location.hash.slice(1);
+      const valid = Array.from(buttons).some((b) => b.dataset.tab === hash);
+      activate(valid ? hash : "integracje");
+    }
+
+    window.addEventListener("hashchange", activateFromHash);
+    activateFromHash();
+
+    document.addEventListener(
+      "astro:before-swap",
+      () => window.removeEventListener("hashchange", activateFromHash),
+      { once: true },
     );
   }
 
-  buttons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      window.location.hash = btn.dataset.tab!;
-    });
-  });
-
-  function activateFromHash() {
-    const hash = window.location.hash.slice(1);
-    const valid = Array.from(buttons).some((b) => b.dataset.tab === hash);
-    activate(valid ? hash : "integracje");
-  }
-
-  window.addEventListener("hashchange", activateFromHash);
-  activateFromHash();
+  document.addEventListener("astro:page-load", initTabs);
 </script>
 
-<div class="mx-4 md:mx-40 mt-12 md:mt-24 mb-5">
+<div class="hidden md:block mx-40 mt-24 mb-5">
   <div class="w-full">
-    <div
-      class="bg-black w-full h-16.75 justify-center flex items-center px-4 md:px-27 gap-x-6 md:gap-x-24"
-    >
+    <div class="bg-black w-full h-16.75 flex justify-center items-center px-27 gap-x-24">
       {
         tabs.map((tab) => (
           <button
@@ -164,14 +166,14 @@ const tabs = [
       }
     </div>
 
-    <div class="tab-panels border border-black pt-8 md:pt-15 px-5 md:px-13.5 pb-6.5">
+    <div class="border border-black pt-15 px-13.5 pb-6.5">
       <div class="tab-panels-inner relative">
         {
-          tabs.map((tab) => (
+          tabs.map((tab, i) => (
             <div
               data-panel={tab.id}
               class="tab-panel"
-              style={`position: ${tab.id === "integracje" ? "relative" : "absolute"}; top: 0; left: 0; width: 100%; opacity: ${tab.id === "integracje" ? "1" : "0"}; pointer-events: ${tab.id === "integracje" ? "auto" : "none"};`}
+              style={`position: ${i === 0 ? "relative" : "absolute"}; top: 0; left: 0; width: 100%; opacity: ${i === 0 ? "1" : "0"}; pointer-events: ${i === 0 ? "auto" : "none"};`}
             >
               {tab.id === "integracje" && <IntegracjeContent />}
               {tab.id === "warsztaty" && <WarsztatyContent />}

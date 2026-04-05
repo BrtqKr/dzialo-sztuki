@@ -1,0 +1,89 @@
+---
+import IntegracjeContent from "./IntegracjeContent.astro";
+import WarsztatyContent from "./WarsztatyContent.astro";
+import PolkolonieContent from "./PolkolonieContent.astro";
+
+const tabs = [
+  { id: "integracje", label: "INTEGRACJE" },
+  { id: "warsztaty", label: "WARSZTATY" },
+  { id: "polkolonie", label: "PÓŁKOLONIE" },
+];
+---
+
+<script>
+  function initMobileTabs() {
+    const triggers =
+      document.querySelectorAll<HTMLElement>("[data-mob-trigger]");
+    if (!triggers.length) return;
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener("click", () => {
+        const id = trigger.dataset.mobTrigger!;
+        const body = document.querySelector<HTMLElement>(
+          `[data-mob-body="${id}"]`,
+        );
+        if (!body) return;
+
+        const isOpen = trigger.dataset.open === "true";
+
+        if (isOpen) {
+          // Snapshot explicit height so we can animate back to 0
+          body.style.height = body.scrollHeight + "px";
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              body.style.height = "0";
+            }),
+          );
+          trigger.dataset.open = "false";
+        } else {
+          body.style.height = body.scrollHeight + "px";
+          trigger.dataset.open = "true";
+          // Once expanded, release to auto so content can reflow freely
+          body.addEventListener(
+            "transitionend",
+            () => {
+              if (trigger.dataset.open === "true") body.style.height = "auto";
+            },
+            { once: true },
+          );
+        }
+      });
+    });
+  }
+
+  document.addEventListener("astro:page-load", initMobileTabs);
+</script>
+
+<div class="md:hidden border-y border-black mt-12 mb-5">
+  {
+    tabs.map((tab, i) => (
+      <div class:list={i > 0 && "border-t border-black"}>
+        <button
+          class="w-full h-12 flex items-center justify-center font-[Michroma] text-xs uppercase tracking-widest cursor-pointer"
+          data-mob-trigger={tab.id}
+          data-open="false"
+        >
+          {tab.label}
+        </button>
+
+        <div
+          class="mob-body overflow-hidden"
+          data-mob-body={tab.id}
+          style="height: 0;"
+        >
+          <div class="px-3 py-6">
+            {tab.id === "integracje" && <IntegracjeContent />}
+            {tab.id === "warsztaty" && <WarsztatyContent />}
+            {tab.id === "polkolonie" && <PolkolonieContent />}
+          </div>
+        </div>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .mob-body {
+    transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+</style>

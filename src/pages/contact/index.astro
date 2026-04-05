@@ -1,33 +1,59 @@
 ---
 import PageLayout from "../../layouts/PageLayout.astro";
+import ContactMobile from "../../components/contact/ContactMobile.astro";
 import wrapperRaw from "../../assets/contact/contact-wrapper.svg?raw";
-import starRaw from "../../assets/home/star.svg?raw";
+import arrow1Raw from "../../assets/contact/arrow1.svg?raw";
+import arrow2Raw from "../../assets/contact/arrow2.svg?raw";
+
+// Prepare arrows for embedding in foreignObject HTML
+// arrow1: long pink — stretches to fill flex space
+const arrow1 = arrow1Raw
+  .replace(/width="[^"]*"/, "")
+  .replace(
+    "<svg ",
+    `<svg style="flex-shrink:1;min-width:20px;height:15px;align-self:center;" `,
+  );
+// arrow2: short teal — fixed size
+const arrow2 = arrow2Raw.replace(
+  "<svg ",
+  `<svg style="flex-shrink:0;height:15px;align-self:center;" `,
+);
 
 const svgWithContent = wrapperRaw.replace(
   "</svg>",
   `<foreignObject x="90" y="50" width="940" height="670">
-    <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;display:flex;flex-direction:column;font-family:Michroma,sans-serif;">
-      <p style="text-align:center;font-size:48px;margin:2.5rem 0 0 0;">PISZ DO NAS!! :D</p>
-      <div style="flex:1;display:flex;align-items:flex-start;padding-top:3rem;">
-        <div style="flex:1;"></div>
-        <div style="flex:1;display:flex;flex-direction:column;gap:1.5rem;font-size:16px;">
-          <div>
-            <p style="font-size:12px;letter-spacing:0.2em;margin:0 0 0.25rem 0;">EMAIL</p>
-            <p style="margin:0;">dzialosztukifundacja@gmail.com</p>
-          </div>
-          <div>
-            <p style="font-size:12px;letter-spacing:0.2em;margin:0 0 0.25rem 0;">TELEFON</p>
-            <p style="margin:0;">+48 786 610 807</p>
-          </div>
-          <div>
-            <p style="font-size:12px;letter-spacing:0.2em;margin:0 0 0.25rem 0;">ADRES DO KORESPONDENCJI</p>
-            <p style="margin:0;">Piotrkowska 276A, 90-361 Łódź</p>
-          </div>
-        </div>
+    <div xmlns="http://www.w3.org/1999/xhtml" style="position:relative;width:100%;height:100%;font-family:Michroma,sans-serif;font-size:20px;line-height:1;">
+
+      <!-- Phone row -->
+      <div style="position:absolute;top:76px;left:0;right:0;display:flex;align-items:center;gap:16px;white-space:nowrap;">
+        <span>Tu możemy się zdzwonić</span>
+        ${arrow1}
+        <a href="tel:+48786610807" style="color:#000000;text-decoration:underline;text-decoration-color:#f7adc5;text-underline-offset:4px;text-decoration-thickness:2px;">+48 786 610 807</a>
       </div>
+
+      <!-- Email row -->
+      <div style="position:absolute;top:124px;left:0;display:flex;align-items:center;gap:16px;white-space:nowrap;">
+        <span>Tu możesz napisać do nas maila</span>
+        ${arrow2}
+        <a href="mailto:dzialosztukifundacja@gmail.com" style="color:inherit;text-decoration:underline;text-decoration-color:#00938A;text-underline-offset:4px;text-decoration-thickness:2px;">dzialosztukifundacja@gmail.com</a>
+      </div>
+
+      <!-- Address block — right half, middle -->
+      <div style="position:absolute;top:300px;right:0;width:460px;line-height:1.6;">
+        <p style="margin:0;">A tutaj przyjmujemy gołębie pocztowe</p>
+        <p style="margin:0;">(adres do korespondencji):</p>
+        <p style="margin:0.4rem 0 0 0;color:#00938A;">Piotrkowska 276A, 90-361 Łódź</p>
+      </div>
+
+      <!-- Halo, CENTRALO! — bottom right, shifted left -->
+      <div style="position:absolute;bottom:56px;right:100px;font-size:32px;line-height:1.25;">
+        <p style="margin:0;">Halo,</p>
+        <p style="margin:0;">CENTRALO!</p>
+      </div>
+
     </div>
   </foreignObject>
-</svg>`
+</svg>`,
 );
 ---
 
@@ -36,58 +62,13 @@ const svgWithContent = wrapperRaw.replace(
   description="Skontaktuj się z Fundacją Działo Sztuki. Piotrkowska 276A, 90-361 Łódź. Tel: +48 786 610 807. Zapytaj o integracje firmowe, warsztaty lub współpracę."
 >
   <!-- Desktop layout -->
-  <section class="hidden md:flex items-center justify-center py-16 px-8 min-h-screen">
+  <section
+    class="hidden md:flex items-center justify-center py-16 px-8 min-h-screen"
+  >
     <div class="w-full max-w-[1120px] [&>svg]:w-full [&>svg]:h-auto">
       <Fragment set:html={svgWithContent} />
     </div>
   </section>
 
-  <!-- Mobile layout -->
-  <section class="md:hidden flex flex-col min-h-screen px-5 pt-6 pb-10 font-[Michroma]">
-    <!-- Squiggly border frame -->
-    <div class="relative flex-1 flex flex-col">
-      <!-- SVG squiggly border -->
-      <svg class="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none">
-        <defs>
-          <filter id="squiggly-border" x="-5%" y="-5%" width="110%" height="110%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" seed="5" result="noise"/>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G"/>
-          </filter>
-        </defs>
-        <rect
-          x="2" y="2"
-          width="calc(100% - 4px)" height="calc(100% - 4px)"
-          fill="none"
-          stroke="black"
-          stroke-width="2.5"
-          filter="url(#squiggly-border)"
-        />
-      </svg>
-
-      <!-- Contact content -->
-      <div class="relative z-10 flex flex-col gap-y-8 px-8 py-10">
-        <div>
-          <p class="text-sm text-gray-500 mb-1">Tu możemy się zdzwonić:</p>
-          <p class="text-xl">+ 48 786 610 807</p>
-        </div>
-        <div>
-          <p class="text-sm text-gray-500 mb-1">Tu możesz napisać do nas maila:</p>
-          <p class="text-base break-all">dzialosztukifundacja@gmail.com</p>
-        </div>
-        <div>
-          <p class="text-sm text-gray-500 mb-1">A tu przyjmujemy gołębie pocztowe</p>
-          <p class="text-sm text-gray-500 mb-1">(adres do korespondencji)</p>
-          <p class="text-xl" style="color:#00938A;">Piotrkowska 276A,</p>
-          <p class="text-xl" style="color:#00938A;">90-361 Łódź</p>
-        </div>
-      </div>
-
-      <!-- Star character at bottom of frame -->
-      <div class="relative z-10 mt-auto flex justify-center overflow-hidden" style="height:220px;">
-        <div class="absolute bottom-[-10%] w-[90%]">
-          <Fragment set:html={starRaw} />
-        </div>
-      </div>
-    </div>
-  </section>
+  <ContactMobile />
 </PageLayout>

@@ -2,25 +2,74 @@
 import starRaw from "../../assets/home/star.svg?raw";
 ---
 
-<div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[12%] w-[110vh] max-w-[95vw]">
+<div
+  id="hero-star"
+  class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[12%] w-[110vh] max-w-[95vw]"
+>
   <Fragment set:html={starRaw} />
 </div>
 
 <script>
-  const MAX_MOVE = 15;
-  const LERP = 0.08;
+  // ── Constants ────────────────────────────────────────────────────────────────
+  const MAX_MOVE   = 15;   // pupil max px
+  const LERP       = 0.08; // pupil lerp
   const NEAR_INNER = 40;
   const NEAR_RANGE = 40;
-  const MID_INNER = 50;
-  const MID_RANGE = 100;
+  const MID_INNER  = 50;
+  const MID_RANGE  = 100;
 
-  let mouseX = window.innerWidth / 2;
+  const FLOAT_AMP_Y  = 20;   // px  — vertical float amplitude
+  const FLOAT_AMP_X  = 10;   // px  — horizontal drift amplitude
+  const FLOAT_FREQ_Y = 0.12; // Hz  — ~8.3 s period (slow, dreamy)
+  const FLOAT_FREQ_X = 0.08; // Hz  — ~12.5 s period
+  const LEAN_MAX     = 28;   // px  — max lean toward cursor
+  const LEAN_FACTOR  = 0.04; // fraction of mouse-star distance applied as lean
+  const LEAN_LERP    = 0.025;// lean smoothing — very lazy, low-gravity pull
+  const ROT_MAX      = 6;    // deg — max rotation
+  const ROT_FACTOR   = 0.008;// mouse-x offset → degrees
+  const ROT_LERP     = 0.02; // rotation smoothing (slower than lean)
+
+  // ── Horn / space-debris spring constants ─────────────────────────────────
+  // Horn avoids the star: when the star drifts one way, the horn slides the
+  // opposite — like a small body slipping out of the gravity well.
+  // Capped tightly so it stays close; spring gives it a floaty settle.
+  const HORN_AVOID    = 0.55; // fraction of star offset to oppose
+  const HORN_MAX      = 10;   // px — max displacement from natural position
+  const HORN_SPRING_K = 0.06; // spring stiffness back to avoid-target
+  const HORN_DAMP     = 0.82; // velocity friction per frame
+  const HORN_MICRO_Y  = 3;    // px — horn's own small independent orbit
+  const HORN_MICRO_X  = 2;    // px
+  const HORN_MICRO_FY = 0.17; // Hz — slightly faster than star
+  const HORN_MICRO_FX = 0.11; // Hz
+
+  // ── Shared state ─────────────────────────────────────────────────────────────
+  let mouseX = window.innerWidth  / 2;
   let mouseY = window.innerHeight / 2;
-  let rafId: number | null = null;
+
+  // Lean target (updated on mousemove, read in RAF)
+  const lean = { tx: 0, ty: 0, cx: 0, cy: 0 };
+
+  // ── Cached star centre for lean calculation ───────────────────────────────
+  function cacheStarCentre() {
+    const el = document.getElementById("hero-star");
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    lean.cx = r.left + r.width  / 2;
+    lean.cy = r.top  + r.height / 2;
+  }
 
   function onMouseMove(e: MouseEvent) {
     mouseX = e.clientX;
     mouseY = e.clientY;
+    const dx   = mouseX - lean.cx;
+    const dy   = mouseY - lean.cy;
+    const dist = Math.hypot(dx, dy);
+    if (dist < 1) return;
+    const mag  = Math.min(dist * LEAN_FACTOR, LEAN_MAX);
+    lean.tx = (dx / dist) * mag;
+    lean.ty = (dy / dist) * mag;
+    // Rotate based on horizontal offset from star centre
+    rotTarget = Math.max(-ROT_MAX, Math.min(ROT_MAX, dx * ROT_FACTOR));
   }
 
   function lerp(a: number, b: number, t: number) {
@@ -31,45 +80,101 @@ import starRaw from "../../assets/home/star.svg?raw";
     return Math.max(0, Math.min(1, (v - inner) / range));
   }
 
-  function setup() {
-    if (rafId !== null) {
-      cancelAnimationFrame(rafId);
-      rafId = null;
-    }
+  // ── Main setup ───────────────────────────────────────────────────────────────
+  let rafId: number | null = null;
+  let leanX = 0, leanY = 0;
+  let rotDeg = 0, rotTarget = 0;
 
+  function setup() {
+    if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+
+    const hero   = document.getElementById("hero-star");
     const pupil1 = document.getElementById("pupil1");
     const pupil2 = document.getElementById("pupil2");
-    if (!pupil1 || !pupil2) return;
+    const horn   = document.getElementById("star-horn");
+    if (!hero || !pupil1 || !pupil2) return;
 
     const off1 = { x: 0, y: 0 };
     const off2 = { x: 0, y: 0 };
+    leanX = 0; leanY = 0;
+    lean.tx = 0; lean.ty = 0;
+    rotDeg = 0; rotTarget = 0;
+
+    // Horn spring state
+    let hx = 0, hy = 0, hvx = 0, hvy = 0;
 
     document.removeEventListener("mousemove", onMouseMove);
     document.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("resize", cacheStarCentre, { passive: true });
+    cacheStarCentre();
 
-    function animate() {
-      const r1 = pupil1!.getBoundingClientRect();
-      const r2 = pupil2!.getBoundingClientRect();
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    hero.style.willChange = "transform";
 
-      const rx1 = r1.left + r1.width / 2 - off1.x;
-      const ry1 = r1.top + r1.height / 2 - off1.y;
-      const rx2 = r2.left + r2.width / 2 - off2.x;
-      const ry2 = r2.top + r2.height / 2 - off2.y;
+    const startTime = performance.now();
+
+    function animate(now: number) {
+      // ── Float (skip if reduced-motion) ──────────────────────────────────────
+      let floatX = 0, floatY = 0;
+      if (!reduced) {
+        const t   = (now - startTime) / 1000;
+        floatY = Math.sin(t * Math.PI * 2 * FLOAT_FREQ_Y) * FLOAT_AMP_Y;
+        // Phase-offset X by π/2 → circular/elliptical orbit
+        floatX = Math.cos(t * Math.PI * 2 * FLOAT_FREQ_X) * FLOAT_AMP_X;
+
+        // Lean: smooth toward target
+        leanX = lerp(leanX, lean.tx, LEAN_LERP);
+        leanY = lerp(leanY, lean.ty, LEAN_LERP);
+
+        rotDeg = lerp(rotDeg, rotTarget, ROT_LERP);
+
+        const tx = floatX + leanX;
+        const ty = floatY + leanY;
+        hero.style.transform = `translate(${tx}px, ${ty}px) rotate(${rotDeg}deg)`;
+
+        // ── Horn spring physics ──────────────────────────────────────────────
+        // Target = opposite of star's offset, capped — horn slides away as
+        // the star drifts toward it, but stays close
+        if (horn) {
+          const raw_htx = -tx * HORN_AVOID;
+          const raw_hty = -ty * HORN_AVOID;
+          const htx = Math.max(-HORN_MAX, Math.min(HORN_MAX, raw_htx));
+          const hty = Math.max(-HORN_MAX, Math.min(HORN_MAX, raw_hty));
+          hvx = hvx * HORN_DAMP + (htx - hx) * HORN_SPRING_K;
+          hvy = hvy * HORN_DAMP + (hty - hy) * HORN_SPRING_K;
+          hx += hvx;
+          hy += hvy;
+          // Micro-orbit: horn has its own slight independent drift
+          const hmx = Math.sin(t * Math.PI * 2 * HORN_MICRO_FX + 1.3) * HORN_MICRO_X;
+          const hmy = Math.cos(t * Math.PI * 2 * HORN_MICRO_FY + 0.7) * HORN_MICRO_Y;
+          horn.style.transform = `translate(${hx + hmx}px, ${hy + hmy}px)`;
+        }
+      }
+
+      // ── Pupils ──────────────────────────────────────────────────────────────
+      // getBoundingClientRect accounts for the float offset, so pupils stay accurate
+      const r1 = pupil1.getBoundingClientRect();
+      const r2 = pupil2.getBoundingClientRect();
+
+      const rx1 = r1.left + r1.width  / 2 - off1.x;
+      const ry1 = r1.top  + r1.height / 2 - off1.y;
+      const rx2 = r2.left + r2.width  / 2 - off2.x;
+      const ry2 = r2.top  + r2.height / 2 - off2.y;
 
       const midX = (rx1 + rx2) / 2;
       const midY = (ry1 + ry2) / 2;
 
-      const d1 = Math.hypot(mouseX - rx1, mouseY - ry1);
-      const d2 = Math.hypot(mouseX - rx2, mouseY - ry2);
+      const d1   = Math.hypot(mouseX - rx1, mouseY - ry1);
+      const d2   = Math.hypot(mouseX - rx2, mouseY - ry2);
       const dMid = Math.hypot(mouseX - midX, mouseY - midY);
 
       const inf1 = Math.min(
-        fade(d1, NEAR_INNER, NEAR_RANGE),
-        fade(dMid, MID_INNER, MID_RANGE),
+        fade(d1,   NEAR_INNER, NEAR_RANGE),
+        fade(dMid, MID_INNER,  MID_RANGE),
       );
       const inf2 = Math.min(
-        fade(d2, NEAR_INNER, NEAR_RANGE),
-        fade(dMid, MID_INNER, MID_RANGE),
+        fade(d2,   NEAR_INNER, NEAR_RANGE),
+        fade(dMid, MID_INNER,  MID_RANGE),
       );
 
       const a1 = Math.atan2(mouseY - ry1, mouseX - rx1);
@@ -85,8 +190,8 @@ import starRaw from "../../assets/home/star.svg?raw";
       off2.x = lerp(off2.x, t2x, LERP);
       off2.y = lerp(off2.y, t2y, LERP);
 
-      pupil1!.style.transform = `translate(${off1.x}px, ${off1.y}px)`;
-      pupil2!.style.transform = `translate(${off2.x}px, ${off2.y}px)`;
+      pupil1.style.transform = `translate(${off1.x}px, ${off1.y}px)`;
+      pupil2.style.transform = `translate(${off2.x}px, ${off2.y}px)`;
 
       rafId = requestAnimationFrame(animate);
     }
