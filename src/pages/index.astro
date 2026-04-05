@@ -1,5 +1,6 @@
 ---
 import HomeHero from "../components/home/HomeHero.astro";
+import HomeMobile from "../components/home/HomeMobile.astro";
 import HomeLayout from "../layouts/HomeLayout.astro";
 import contentStarRaw from "../assets/home/content-star.svg?raw";
 
@@ -10,48 +11,89 @@ const FONT_CLASS: Record<string, string> = {
   cute: "font-[CuteFont]",
 };
 
+// Links ordered soonest-first
 const links = [
-  { title: "Warsztaty\n25.10", font: "cute",    fontSize: "clamp(20px, 2.1vw, 68px)", x: "18vw", y: "52vh" },
-  { title: "Plener\nlipiec",   font: "michroma", fontSize: "clamp(15px, 1.6vw, 51px)", x: "82vw", y: "38vh" },
+  {
+    title: "Warsztaty\n25.10",
+    font: "cute",
+    fontSize: "clamp(20px, 2.1vw, 68px)",
+    x: "18vw",
+    y: "52vh",
+  },
+  {
+    title: "Plener\nlipiec",
+    font: "michroma",
+    fontSize: "clamp(15px, 1.6vw, 51px)",
+    x: "82vw",
+    y: "38vh",
+  },
 ];
 
+// Desktop: each star gets its own random colour
 const stars = links.map((link) => {
   const color = COLORS[Math.floor(Math.random() * COLORS.length)];
   const svg = contentStarRaw
     .replace(/width="[\d.]+"/, 'width="100%"')
     .replace(/height="[\d.]+"/, 'height="100%"')
-    // Apply random colour to the coloured star layer (g3)
-    .replace(/style="fill:#[A-Fa-f0-9]{6};fill-opacity:1"/, `style="fill:${color};fill-opacity:1"`)
-    // Black & patterned layers: hidden by default, revealed on hover
-    .replace('id="g2"', 'id="g2" class="star-detail" style="opacity:0;transition:opacity 0.2s ease"')
-    .replace('id="Warstwa_7_kopia_2"', 'id="Warstwa_7_kopia_2" class="star-detail" style="opacity:0;transition:opacity 0.2s ease"');
+    .replace(
+      /style="fill:#[A-Fa-f0-9]{6};fill-opacity:1"/,
+      `style="fill:${color};fill-opacity:1"`,
+    )
+    .replace(
+      'id="g2"',
+      'id="g2" class="star-detail" style="opacity:0;transition:opacity 0.2s ease"',
+    )
+    .replace(
+      'id="Warstwa_7_kopia_2"',
+      'id="Warstwa_7_kopia_2" class="star-detail" style="opacity:0;transition:opacity 0.2s ease"',
+    );
   return { ...link, svg, color };
 });
+
+// Mobile: random background, star colour guaranteed ≠ background
+const mobileBg = COLORS[Math.floor(Math.random() * COLORS.length)];
+const starOptions = COLORS.filter((c) => c !== mobileBg);
+const mobileStar = starOptions[Math.floor(Math.random() * starOptions.length)];
 ---
 
 <HomeLayout
   title="Fundacja Działo Sztuki | Warsztaty i Integracje Firmowe Łódź"
   description="Fundacja Działo Sztuki – warsztaty artystyczne, integracje firmowe i arteterapia w Łodzi. Towarzyszymy w odkrywaniu sztuki dzieciom, młodzieży i dorosłym."
 >
-  {
-    stars.map((star, i) => (
-      <a
-        href={star.path ?? "#"}
-        data-color={star.color}
-        class="star-fade fixed inline-block no-underline z-10"
-        style={`left:${star.x};top:${star.y};transform:translate(-50%,-50%);animation-delay:${i * 0.8}s;width:clamp(130px,12vw,380px);`}
-      >
-        <Fragment set:html={star.svg} />
-        <span
-          class={`${FONT_CLASS[star.font]} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-black text-center w-3/4 whitespace-pre-line pointer-events-none`}
-          style={`font-size:${star.fontSize};line-height:1.1;`}
+  <!-- Mobile layout -->
+  <HomeMobile
+    bgColor={mobileBg}
+    starColor={mobileStar}
+    soonest={links[0]}
+    rest={links.slice(1)}
+  />
+
+  <!-- Desktop: event stars -->
+  <div class="hidden md:block">
+    {
+      stars.map((star, i) => (
+        <a
+          href={star.path ?? "#"}
+          data-color={star.color}
+          class="star-fade hidden md:inline-block fixed no-underline z-10"
+          style={`left:${star.x};top:${star.y};transform:translate(-50%,-50%);animation-delay:${i * 0.8}s;width:clamp(130px,12vw,380px);`}
         >
-          {star.title}
-        </span>
-      </a>
-    ))
-  }
-  <HomeHero />
+          <Fragment set:html={star.svg} />
+          <span
+            class={`${FONT_CLASS[star.font]} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-black text-center w-3/4 whitespace-pre-line pointer-events-none`}
+            style={`font-size:${star.fontSize};line-height:1.1;`}
+          >
+            {star.title}
+          </span>
+        </a>
+      ))
+    }
+  </div>
+
+  <!-- Desktop: hero star -->
+  <div class="hidden md:block">
+    <HomeHero />
+  </div>
 </HomeLayout>
 
 <script>
@@ -82,12 +124,15 @@ const stars = links.map((link) => {
 
 <style>
   @keyframes starFadeIn {
-    to { opacity: 1; }
+    to {
+      opacity: 1;
+    }
   }
   .star-fade {
     opacity: 0;
     animation: starFadeIn 1s ease forwards;
-    transition: transform 0.3s ease, filter 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      filter 0.3s ease;
   }
-
 </style>
