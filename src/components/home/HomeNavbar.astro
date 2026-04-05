@@ -4,7 +4,7 @@ import MobileNavOverlay from "../MobileNavOverlay.astro";
 ---
 
 <script>
-  const COLORS = ["#F7CB1B", "#F5F5F5", "#F7ADC5", "#00938A", "#826887"];
+  const COLORS = ["#F7CB1B", "#F7ADC5", "#00938A", "#826887"];
 
   function attachHoverListeners() {
     document.querySelectorAll<HTMLElement>(".nav-link").forEach((link) => {
@@ -29,14 +29,18 @@ import MobileNavOverlay from "../MobileNavOverlay.astro";
 
 <!-- Desktop navbar -->
 <nav class="hidden md:flex relative flex-row py-6 h-36 pb-8 items-center mb-5">
-  <div class="flex flex-row gap-x-16 uppercase text-[2.5rem] font-[CuteFont] flex-1 justify-end pr-[clamp(60px,6vw,80px)]">
+  <div
+    class="flex flex-row gap-x-16 uppercase text-[2.5rem] font-[CuteFont] flex-1 justify-end pr-[clamp(60px,6vw,80px)]"
+  >
     <a href="/about" class="nav-link text-nowrap">O nas</a>
     <a href="/offer" class="nav-link text-nowrap">Oferta</a>
   </div>
   <a href="/" class="flex-shrink-0">
     <img src={navbarLogo.src} alt="Logo" width="139" height="55" />
   </a>
-  <div class="flex flex-row gap-x-16 uppercase text-[2.5rem] font-[CuteFont] flex-1 justify-start pl-[clamp(60px,6vw,80px)]">
+  <div
+    class="flex flex-row gap-x-16 uppercase text-[2.5rem] font-[CuteFont] flex-1 justify-start pl-[clamp(60px,6vw,80px)]"
+  >
     <a href="/actions" class="nav-link text-nowrap">Dzialania</a>
     <a href="/contact" class="nav-link text-nowrap">Kontakt</a>
   </div>
@@ -52,9 +56,14 @@ import MobileNavOverlay from "../MobileNavOverlay.astro";
     class="hamburger-btn flex flex-col gap-y-[6px] justify-center items-center w-10 h-10"
     aria-label="Menu"
   >
-    <span class="ham-top block w-7 h-0.5 bg-black transition-all duration-300 origin-center"></span>
-    <span class="ham-mid block w-7 h-0.5 bg-black transition-all duration-300"></span>
-    <span class="ham-bot block w-7 h-0.5 bg-black transition-all duration-300 origin-center"></span>
+    <span
+      class="ham-top block w-7 h-0.5 bg-black transition-all duration-300 origin-center"
+    ></span>
+    <span class="ham-mid block w-7 h-0.5 bg-black transition-all duration-300"
+    ></span>
+    <span
+      class="ham-bot block w-7 h-0.5 bg-black transition-all duration-300 origin-center"
+    ></span>
   </button>
 </nav>
 
