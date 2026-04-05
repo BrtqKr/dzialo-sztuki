@@ -7,6 +7,25 @@ import PageLayout from "../../layouts/PageLayout.astro";
   title="Działania Artystyczne i Plenery | Fundacja Działo Sztuki"
   description="Nadchodzące warsztaty, plenery i projekty artystyczne Fundacji Działo Sztuki w Łodzi. Sprawdź, co aktualnie dzieje się w świecie sztuki z nami."
 >
+  <!-- Scroll prompt: starts invisible, JS fades it in only when appropriate -->
+  <div id="scroll-prompt" class="fixed inset-0 flex flex-col items-center justify-center z-20 pointer-events-none" style="opacity:0;transition:opacity 0.6s ease;">
+    <blockquote class="text-center px-10 max-w-md flex flex-col items-center gap-y-4">
+      <p class="font-[Michroma] text-black/75 text-base md:text-lg leading-relaxed tracking-wide">
+        „Zawsze znajdą się kwiaty<br />dla tych, którzy chcą je widzieć"
+      </p>
+      <footer class="font-[Michroma] text-black/40 text-xs tracking-[0.25em] uppercase">
+        — Henri Matisse
+      </footer>
+    </blockquote>
+
+    <div class="mt-10 scroll-chevron" aria-hidden="true">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <path d="M6 9l8 8 8-8" stroke="black" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+        <path d="M6 15l8 8 8-8" stroke="black" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.25"/>
+      </svg>
+    </div>
+  </div>
+
   <div id="plant-scroll" style="height: 500vh; position: relative;">
     <div
       id="plant-sticky"
@@ -31,6 +50,16 @@ import PageLayout from "../../layouts/PageLayout.astro";
   /* Also zero out the footer wrapper div */
   :global(body:has(#plant-scroll) .footer-wrapper) {
     margin-top: 0;
+  }
+
+  /* transition is set inline to avoid flash before stylesheet loads */
+
+  @keyframes scrollBounce {
+    0%, 100% { transform: translateY(0);   opacity: 1; }
+    50%       { transform: translateY(7px); opacity: 0.6; }
+  }
+  .scroll-chevron {
+    animation: scrollBounce 1.6s ease-in-out infinite;
   }
 
   #plant-sticky {
@@ -61,6 +90,37 @@ import PageLayout from "../../layouts/PageLayout.astro";
     teardown,
   } from "../../scripts/plantAnimation";
 
+  function setupScrollPrompt() {
+    const prompt = document.getElementById("scroll-prompt");
+    if (!prompt) return;
+
+    // Always reset to hidden first (handles re-navigation via Astro)
+    prompt.style.opacity = "0";
+
+    // Don't show if the user has already scrolled the plant in this session
+    const alreadySeen =
+      sessionStorage.getItem("plantScrollY") ||
+      sessionStorage.getItem("actionsScrolled") ||
+      window.scrollY > 0;
+
+    if (alreadySeen) return;
+
+    // Fade in after a frame so the transition actually fires
+    requestAnimationFrame(() => {
+      prompt.style.opacity = "1";
+    });
+
+    let dismissed = false;
+    function dismiss() {
+      if (dismissed) return;
+      dismissed = true;
+      sessionStorage.setItem("actionsScrolled", "1");
+      prompt.style.opacity = "0";
+    }
+
+    window.addEventListener("scroll", dismiss, { once: true, passive: true });
+  }
+
   async function setup() {
     const container = document.getElementById("plant-sticky");
     if (!container) return;
@@ -71,6 +131,7 @@ import PageLayout from "../../layouts/PageLayout.astro";
     }
 
     initPlantAnimation();
+    setupScrollPrompt();
 
     // Restore scroll + animation state when returning from a flower page
     const savedY = sessionStorage.getItem("plantScrollY");

@@ -85,8 +85,8 @@ const logoSvg = mobileLogoRaw
       pageLinks.map((link, i) => (
         <a
           href={link.href}
-          class="mob-fade font-[CuteFont] text-black no-underline uppercase"
-          style={`font-size:clamp(28px,8vw,48px);line-height:1.1;animation-delay:${0.3 + i * 0.15}s;`}
+          class="mob-fade font-[Michroma] text-lg text-black no-underline uppercase"
+          style={`animation-delay:${0.3 + i * 0.15}s;`}
         >
           {link.label}
         </a>
@@ -132,7 +132,7 @@ const logoSvg = mobileLogoRaw
       });
     });
   }
-  setupMobileStar();
+
   document.addEventListener("astro:page-load", setupMobileStar);
 </script>
 
