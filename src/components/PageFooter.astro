@@ -34,9 +34,12 @@ const { invertedStar = false } = Astro.props;
       </div>
     </div>
     <div class="relative text-white p-8 flex flex-col gap-y-4">
-      {invertedStar
-        ? <FooterStarInverted class="absolute bottom-full left-1/2 -translate-x-1/2" />
-        : <FooterStar class="absolute bottom-full left-1/2 -translate-x-1/2" />
+      {
+        invertedStar ? (
+          <FooterStarInverted class="absolute bottom-full left-1/2 -translate-x-1/2" />
+        ) : (
+          <FooterStar class="absolute bottom-full left-1/2 -translate-x-1/2" />
+        )
       }
       <div>Zaobserwuj nas<br />@dzialosztuki</div>
       <div class="flex flex-row gap-x-4">
@@ -58,9 +61,12 @@ const { invertedStar = false } = Astro.props;
   <footer class="md:hidden font-[Michroma] bg-black text-white">
     <!-- Star: full width, sits above footer bg -->
     <div class="relative">
-      {invertedStar
-        ? <FooterStarInverted class="absolute bottom-full left-0 w-full h-auto block" />
-        : <FooterStar class="absolute bottom-full left-0 w-full h-auto block" />
+      {
+        invertedStar ? (
+          <FooterStarInverted class="absolute bottom-full left-0 w-full h-auto block" />
+        ) : (
+          <FooterStar class="absolute bottom-full left-0 w-full h-auto block" />
+        )
       }
     </div>
 
