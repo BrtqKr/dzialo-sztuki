@@ -1,0 +1,20 @@
+{
+  "@context": "https://schema.org",
+  "@type": "NGO",
+  "name": "Fundacja Działo Sztuki",
+  "url": "https://dzialosztuki.pl",
+  "logo": "https://dzialosztuki.pl/favicon.svg",
+  "description": "Fundacja towarzysząca w odkrywaniu sztuki poprzez warsztaty artystyczne, integracje firmowe i arteterapię w Łodzi.",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Piotrkowska 276A",
+    "addressLocality": "Łódź",
+    "postalCode": "90-361",
+    "addressCountry": "PL"
+  },
+  "telephone": "+48786610807",
+  "email": "dzialosztukifundacja@gmail.com",
+  "areaServed": "Łódź",
+  "knowsLanguage": ["pl", "en"],
+  "sameAs": []
+}

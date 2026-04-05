@@ -3,17 +3,50 @@ import HomeNavbar from "../components/home/HomeNavbar.astro";
 import PageFooter from "../components/PageFooter.astro";
 import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
+import schemaOrg from "../data/schema-org.json";
+
+interface Props {
+  title?: string;
+  description?: string;
+  lang?: string;
+  ogImage?: string;
+}
+const {
+  title = "Fundacja Działo Sztuki | Łódź",
+  description = "Fundacja Działo Sztuki – warsztaty artystyczne, integracje firmowe i arteterapia w Łodzi. Towarzyszymy w odkrywaniu sztuki dzieciom, młodzieży i dorosłym.",
+  lang = "pl",
+  ogImage = "/favicon.svg", /* TODO: replace with /og-image.png (1200×630) before launch */
+} = Astro.props;
+
+const siteUrl = "https://dzialosztuki.pl";
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate icon" href="/favicon.ico" />
+    <link rel="canonical" href={canonicalUrl} />
     <meta name="generator" content={Astro.generator} />
-    <title>Astro Basics</title>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(ogImage, siteUrl).href} />
+    <meta property="og:locale" content={lang === "pl" ? "pl_PL" : "en_US"} />
+    <meta property="og:site_name" content="Fundacja Działo Sztuki" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(ogImage, siteUrl).href} />
+    <script type="application/ld+json" set:html={JSON.stringify(schemaOrg)} />
     <ClientRouter />
   </head>
   <body class="overflow-hidden">
