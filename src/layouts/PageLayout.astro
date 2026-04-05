@@ -4,26 +4,60 @@ import PageFooter from "../components/PageFooter.astro";
 import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
 import PageNavbar from "../components/PageNavbar.astro";
+import schemaOrg from "../data/schema-org.json";
 
 interface Props {
   invertedStar?: boolean;
+  title?: string;
+  description?: string;
+  lang?: string;
+  ogImage?: string;
 }
-const { invertedStar = false } = Astro.props;
+const {
+  invertedStar = false,
+  title = "Fundacja Działo Sztuki | Warsztaty i Integracje Firmowe Łódź",
+  description = "Fundacja Działo Sztuki towarzyszy w odkrywaniu sztuki. Warsztaty artystyczne, arteterapia i działania kulturalne w Łodzi.",
+  lang = "pl",
+  ogImage = "/favicon.svg", /* TODO: replace with /og-image.png (1200×630) before launch */
+} = Astro.props;
+
+const siteUrl = "https://dzialosztuki.pl";
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="alternate icon" href="/favicon.ico" />
+    <link rel="canonical" href={canonicalUrl} />
     <meta name="generator" content={Astro.generator} />
-    <title>Astro Basics</title>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(ogImage, siteUrl).href} />
+    <meta property="og:locale" content={lang === "pl" ? "pl_PL" : "en_US"} />
+    <meta property="og:site_name" content="Fundacja Działo Sztuki" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(ogImage, siteUrl).href} />
+    <script type="application/ld+json" set:html={JSON.stringify(schemaOrg)} />
     <ClientRouter />
   </head>
-  <body class="pt-20">
-    <div id="bloom-overlay" style="display:none;position:fixed;inset:0;z-index:9999;pointer-events:none;"></div>
+  <body class="pt-20 overflow-x-hidden">
+    <div
+      id="bloom-overlay"
+      style="display:none;position:fixed;inset:0;z-index:9999;pointer-events:none;"
+    >
+    </div>
     <PageNavbar />
     <slot />
     <PageFooter invertedStar={invertedStar} />

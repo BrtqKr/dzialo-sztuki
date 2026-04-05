@@ -1,0 +1,242 @@
+---
+import patternRaw from "../assets/mobile-menu-pattern.svg?raw";
+
+interface Props {
+  logoSrc: string;
+  logoWidth?: number;
+  logoHeight?: number;
+}
+const { logoSrc, logoWidth = 104, logoHeight = 55 } = Astro.props;
+
+// Prepare the pattern SVG:
+// - fill full container (slice, not letterbox)
+// - give color path an id for runtime color swap
+// - wrap paths in an inner animated group
+// viewBox is shifted so the star's dense centre sits in the lower-right of the
+// display. The original viewBox "0 0 453 721" had the centre near the left
+// edge. "-100 -180 453 721" moves the visible window up-left so the star body
+// appears at ~80 % from left and ~80 % from top on any screen size.
+const patternSvg = patternRaw
+  .replace(
+    '<svg width="453" height="721" viewBox="0 0 453 721" fill="none" xmlns="http://www.w3.org/2000/svg">',
+    '<svg width="100%" height="100%" viewBox="-100 -180 453 721" fill="none" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">',
+  )
+  .replace('fill="#826887"', 'id="menu-pattern-colored" fill="#826887"')
+  // No CSS transform on the inner group — GSAP owns all transforms
+  .replace(
+    '<g clip-path="url(#clip0_1076_4586)">',
+    '<g clip-path="url(#clip0_1076_4586)"><g id="menu-pattern-inner">',
+  )
+  .replace("</g>\n<defs>", "</g>\n</g>\n<defs>");
+---
+
+<div
+  id="mobile-nav-overlay"
+  class="fixed inset-0 z-[100] flex flex-col overflow-hidden"
+  style="background-color:#F5F5F5; opacity:0; pointer-events:none;"
+  aria-hidden="true"
+>
+  <!-- Pattern fills the entire overlay -->
+  <div class="absolute inset-0 pointer-events-none">
+    <Fragment set:html={patternSvg} />
+  </div>
+
+  <!-- Top bar: identical dimensions and padding to the mobile navbar -->
+  <div
+    class="relative z-20 flex flex-row h-20 px-6 items-center justify-between flex-shrink-0"
+  >
+    <a href="/" class="mobile-nav-link">
+      <img src={logoSrc} alt="Logo" width={logoWidth} height={logoHeight} />
+    </a>
+    <button
+      id="mobile-nav-close"
+      class="w-10 h-10 flex items-center justify-center"
+      aria-label="Zamknij menu"
+    >
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <line
+          x1="3"
+          y1="3"
+          x2="25"
+          y2="25"
+          stroke="black"
+          stroke-width="2.5"
+          stroke-linecap="round"></line>
+        <line
+          x1="25"
+          y1="3"
+          x2="3"
+          y2="25"
+          stroke="black"
+          stroke-width="2.5"
+          stroke-linecap="round"></line>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Nav links: sit just below the top bar, in the upper/clear portion of the screen -->
+  <nav
+    id="menu-nav-links"
+    class="relative z-20 flex flex-col items-start px-6 gap-y-4 pt-6"
+    style="opacity:0;"
+  >
+    <a
+      href="/about"
+      class="mobile-nav-link nav-link uppercase font-[CuteFont] text-5xl text-black leading-none"
+      >O nas</a
+    >
+    <a
+      href="/offer"
+      class="mobile-nav-link nav-link uppercase font-[CuteFont] text-5xl text-black leading-none"
+      >Oferta</a
+    >
+    <a
+      href="/actions"
+      class="mobile-nav-link nav-link uppercase font-[CuteFont] text-5xl text-black leading-none"
+      >Dzialania</a
+    >
+    <a
+      href="/contact"
+      class="mobile-nav-link nav-link uppercase font-[CuteFont] text-5xl text-black leading-none"
+      >Kontakt</a
+    >
+  </nav>
+</div>
+
+<script>
+  import gsap from "gsap";
+
+  const MENU_COLORS = ["#F7CB1B", "#F7ADC5", "#00938A", "#826887"];
+
+  let isOpen = false;
+  let closeTimeline: gsap.core.Timeline | null = null;
+
+  function openMenu() {
+    if (isOpen) return;
+    isOpen = true;
+
+    const overlay = document.getElementById(
+      "mobile-nav-overlay",
+    ) as HTMLElement | null;
+    const patternInner = document.getElementById(
+      "menu-pattern-inner",
+    ) as SVGGElement | null;
+    const coloredPath = document.getElementById(
+      "menu-pattern-colored",
+    ) as SVGPathElement | null;
+    const navLinks = document.getElementById(
+      "menu-nav-links",
+    ) as HTMLElement | null;
+
+    if (!overlay) return;
+
+    const color = MENU_COLORS[Math.floor(Math.random() * MENU_COLORS.length)];
+    if (coloredPath) coloredPath.setAttribute("fill", color);
+
+    if (closeTimeline) {
+      closeTimeline.kill();
+      closeTimeline = null;
+    }
+
+    // Negative x/y shifts the paths up-left so more star content falls inside
+    // the clipped viewport, increasing coverage especially on small screens.
+    const STAR_X = -40;
+    const STAR_Y = -100;
+
+    gsap.set(patternInner, {
+      x: STAR_X,
+      y: STAR_Y,
+      scale: 0,
+      transformOrigin: "50% 50%",
+    });
+    gsap.set(navLinks, { opacity: 0 });
+
+    overlay.style.opacity = "1";
+    overlay.style.pointerEvents = "auto";
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+
+    const tl = gsap.timeline();
+    tl.to(patternInner, {
+      x: STAR_X,
+      y: STAR_Y,
+      scale: 1,
+      duration: 0.9,
+      ease: "back.out(1.4)",
+      transformOrigin: "50% 50%",
+    });
+    tl.to(
+      navLinks,
+      { opacity: 1, duration: 0.35, ease: "power2.out" },
+      "-=0.4",
+    );
+  }
+
+  function closeMenu() {
+    if (!isOpen) return;
+    isOpen = false;
+
+    const overlay = document.getElementById(
+      "mobile-nav-overlay",
+    ) as HTMLElement | null;
+    const patternInner = document.getElementById(
+      "menu-pattern-inner",
+    ) as SVGGElement | null;
+    const navLinks = document.getElementById(
+      "menu-nav-links",
+    ) as HTMLElement | null;
+
+    if (!overlay) return;
+
+    closeTimeline = gsap.timeline({
+      onComplete: () => {
+        overlay.style.opacity = "0";
+        overlay.style.pointerEvents = "none";
+        overlay.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+      },
+    });
+    closeTimeline.to(navLinks, {
+      opacity: 0,
+      duration: 0.2,
+      ease: "power2.in",
+    });
+    closeTimeline.to(
+      patternInner,
+      {
+        x: -40,
+        y: -100,
+        scale: 0,
+        duration: 0.5,
+        ease: "back.in(1.4)",
+        transformOrigin: "50% 50%",
+      },
+      "-=0.1",
+    );
+    closeTimeline.to(
+      overlay,
+      { opacity: 0, duration: 0.2, ease: "power2.in" },
+      "-=0.15",
+    );
+  }
+
+  function setup() {
+    document
+      .querySelectorAll<HTMLElement>("[data-hamburger]")
+      .forEach((btn) => {
+        btn.addEventListener("click", openMenu);
+      });
+    document
+      .getElementById("mobile-nav-close")
+      ?.addEventListener("click", closeMenu);
+    document.querySelectorAll(".mobile-nav-link").forEach((link) => {
+      link.addEventListener("click", closeMenu);
+    });
+  }
+
+  setup();
+  document.addEventListener("astro:page-load", () => {
+    isOpen = false;
+    setup();
+  });
+</script>

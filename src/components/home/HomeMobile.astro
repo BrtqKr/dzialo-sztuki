@@ -1,0 +1,150 @@
+---
+import contentStarRaw from "../../assets/home/content-star.svg?raw";
+import mobileStarRaw from "../../assets/home/mobile-homepage-star.svg?raw";
+import mobileLogoRaw from "../../assets/home/mobile-homepage-logo.svg?raw";
+
+interface LinkItem {
+  title: string;
+  font: string;
+  path?: string;
+}
+
+interface Props {
+  bgColor: string;
+  starColor: string;
+  soonest: LinkItem;
+  rest: LinkItem[];
+}
+
+const { bgColor, starColor, soonest, rest } = Astro.props;
+
+const FONT_CLASS: Record<string, string> = {
+  michroma: "font-[Michroma]",
+  cute: "font-[CuteFont]",
+};
+
+const pageLinks = [
+  { label: "O nas", href: "/about" },
+  { label: "Oferta", href: "/offer" },
+  { label: "Dzialania", href: "/actions" },
+  { label: "Kontakt", href: "/contact" },
+];
+
+// Top star: content-star.svg with random colour on the coloured layer (g3)
+// + detail layers hidden by default (same as desktop)
+const topStarSvg = contentStarRaw
+  .replace(/width="[\d.]+"/, 'width="100%"')
+  .replace(/height="[\d.]+"/, 'height="100%"')
+  .replace(
+    /style="fill:#[A-Fa-f0-9]{6};fill-opacity:1"/,
+    `style="fill:${starColor};fill-opacity:1"`,
+  )
+  .replace(
+    'id="g2"',
+    'id="g2" class="mob-star-detail" style="opacity:0;transition:opacity 0.2s ease"',
+  )
+  .replace(
+    'id="Warstwa_7_kopia_2"',
+    'id="Warstwa_7_kopia_2" class="mob-star-detail" style="opacity:0;transition:opacity 0.2s ease"',
+  );
+
+// Decorative bottom-left star: mobile-homepage-star.svg, original colours
+const decoStarSvg = mobileStarRaw
+  .replace(/width="\d+"/, 'width="100%"')
+  .replace(/height="\d+"/, 'height="100%"');
+
+// Logo: height driven by CSS
+const logoSvg = mobileLogoRaw
+  .replace(/width="\d+"/, 'width="auto"')
+  .replace(/height="\d+"/, 'height="100%"');
+---
+
+<div
+  class="md:hidden fixed inset-0 overflow-hidden"
+  style={`background-color: ${bgColor}`}
+>
+  <!-- Top star: content-star.svg, soonest event, 62vw, centred x, partially above viewport -->
+  <a
+    href={soonest.path ?? "#"}
+    class="mob-fade absolute no-underline block"
+    style="width:62vw; left:50%; top:-20vw; transform:translateX(-50%);"
+    data-mob-star
+  >
+    <Fragment set:html={topStarSvg} />
+    <span
+      class={`${FONT_CLASS[soonest.font]} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-black text-center w-3/4 whitespace-pre-line pointer-events-none`}
+      style="font-size:clamp(18px,5.5vw,32px);line-height:1.15;"
+    >
+      {soonest.title}
+    </span>
+  </a>
+
+  <!-- Page nav links: left side, staggered fade -->
+  <nav class="absolute left-6 top-[42%] flex flex-col gap-y-3">
+    {
+      pageLinks.map((link, i) => (
+        <a
+          href={link.href}
+          class="mob-fade font-[Michroma] text-lg text-black no-underline uppercase"
+          style={`animation-delay:${0.3 + i * 0.15}s;`}
+        >
+          {link.label}
+        </a>
+      ))
+    }
+  </nav>
+
+  <!-- Bottom-left decorative star -->
+  <div
+    class="mob-fade absolute"
+    style="width:20vw; left:4vw; bottom:3vh; animation-delay:1.1s;"
+  >
+    <Fragment set:html={decoStarSvg} />
+  </div>
+
+  <!-- Bottom-right logo: slightly smaller to leave room for links -->
+  <div
+    class="mob-fade absolute bottom-1/8 right-6"
+    style="height:58vh; width:auto; animation-delay:0.15s;"
+  >
+    <Fragment set:html={logoSvg} />
+  </div>
+</div>
+
+<script>
+  function setupMobileStar() {
+    const star = document.querySelector<HTMLElement>("[data-mob-star]");
+    if (!star) return;
+    const details = star.querySelectorAll<SVGGElement>(".mob-star-detail");
+
+    star.addEventListener("mouseenter", () => {
+      star.style.transform = "translateX(-50%) scale(1.05)";
+      details.forEach((el) => {
+        el.style.transition = "opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1)";
+        el.style.opacity = "1";
+      });
+    });
+    star.addEventListener("mouseleave", () => {
+      star.style.transform = "translateX(-50%)";
+      details.forEach((el) => {
+        el.style.transition = "opacity 0.2s ease";
+        el.style.opacity = "0";
+      });
+    });
+  }
+
+  document.addEventListener("astro:page-load", setupMobileStar);
+</script>
+
+<style>
+  @keyframes mobFadeIn {
+    to {
+      opacity: 1;
+    }
+  }
+  .mob-fade {
+    opacity: 0;
+    animation: mobFadeIn 0.9s ease forwards;
+    transition: transform 0.3s ease;
+  }
+</style>

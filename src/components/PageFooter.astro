@@ -12,8 +12,9 @@ interface Props {
 const { invertedStar = false } = Astro.props;
 ---
 
-<div class="relative z-10">
-  <footer class="flex flex-row font-[Michroma] bg-black mt-42">
+<div class="footer-wrapper relative z-10">
+  <!-- Desktop footer -->
+  <footer class="hidden md:flex flex-row font-[Michroma] bg-black mt-42">
     <div class="flex-1 text-white p-8 flex flex-col justify-center">
       <div class="text-sm leading-5">
         <p>Logotyp</p>
@@ -47,6 +48,53 @@ const { invertedStar = false } = Astro.props;
     <div class="text-white p-8 text-sm leading-5 flex items-center">
       Fundacja Działo Sztuki<br />Piotrkowska 276A,<br />90-361 Łódź<br />NIP
       7292767283<br />KRS 0001213889<br />
+    </div>
+  </footer>
+
+  <!-- Mobile footer -->
+  <footer class="md:hidden font-[Michroma] bg-black text-white">
+    <!-- Star above footer -->
+    <div class="relative flex justify-center">
+      {invertedStar
+        ? <FooterStarInverted class="absolute bottom-full left-1/2 -translate-x-1/2" />
+        : <FooterStar class="absolute bottom-full left-1/2 -translate-x-1/2" />
+      }
+    </div>
+
+    <!-- Top row: org info + social icons -->
+    <div class="flex flex-row items-start justify-between px-5 pt-6 pb-4">
+      <div class="text-sm leading-6">
+        <p>Fundacja Działo Sztuki</p>
+        <p>NIP 7292767283</p>
+        <p>KRS 0001213889</p>
+      </div>
+      <div class="flex flex-col items-end gap-y-3">
+        <div class="flex flex-row gap-x-4">
+          <Instagram />
+          <Facebook />
+          <Linkedin />
+        </div>
+        <p class="text-sm">+48 786 610 807</p>
+      </div>
+    </div>
+
+    <!-- Copyright info -->
+    <div class="px-5 pb-2 text-sm leading-6">
+      <p>Logotyp</p>
+      <p class="flex items-center gap-x-2">
+        &copy; 2026 Działo Sztuki &amp; Julian Achilles Pawlak<Arrow />
+      </p>
+      <p>Strona internetowa</p>
+      <p class="flex items-center gap-x-2">
+        &copy; 2026 Działo Sztuki &amp; Ziomale<Arrow />
+      </p>
+    </div>
+
+    <!-- Privacy links -->
+    <div class="border-t border-white mx-5 py-3 flex flex-row gap-x-4 text-xs">
+      <a href="/privacy">polityka prywatności</a>
+      <span>|</span>
+      <a href="/accessibility">deklaracja dostępności</a>
     </div>
   </footer>
 </div>
