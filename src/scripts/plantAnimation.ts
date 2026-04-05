@@ -288,7 +288,7 @@ export function initPlantAnimation() {
     trigger: "#plant-scroll",
     start: "top top",
     end: "bottom bottom",
-    scrub: 1.2,
+    scrub: true,
     animation: panTl,
   });
 
