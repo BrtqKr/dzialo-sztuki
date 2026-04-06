@@ -1,0 +1,93 @@
+---
+interface Props {
+  photo: string;
+  mask: string;
+  maskW: number;
+  maskH: number;
+  name: string;
+  title?: string;
+  gapClass: string;
+  desc: string;
+  index: number;
+}
+
+const { photo, mask, maskW, maskH, name, title, gapClass, desc, index } =
+  Astro.props;
+
+const photoLeft = index % 2 === 0;
+const maskCss = `mask-image:url(${mask});mask-size:contain;mask-repeat:no-repeat;mask-position:top center;-webkit-mask-image:url(${mask});-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;-webkit-mask-position:top center;`;
+---
+
+<div
+  class="flex flex-row items-stretch w-full"
+  data-author-index={index}
+>
+  {
+    photoLeft ? (
+      <>
+        <div
+          class="author-photo shrink-0"
+          style={`aspect-ratio:${maskW}/${maskH};min-height:${maskH}px;max-height:${maskH}px;${maskCss}`}
+        >
+          <img
+            src={photo}
+            alt={name}
+            style="width:100%;height:100%;object-fit:cover;object-position:right center;"
+          />
+        </div>
+        <div class={`author-text font-[Michroma] ${gapClass} flex-1 max-w-2xl`}>
+          <p class="text-2xl leading-tight">{name}</p>
+          {title && <p class="text-base text-black mt-2">{title}</p>}
+          <p class="text-[14px] leading-7 mt-12 text-left" set:html={desc} />
+        </div>
+      </>
+    ) : (
+      <>
+        <div class={`author-text font-[Michroma] ${gapClass} flex-1 max-w-2xl`}>
+          <p class="text-2xl leading-tight text-right">{name}</p>
+          {title && (
+            <p class="text-base text-black mt-2 text-right">{title}</p>
+          )}
+          <p class="text-[14px] leading-7 mt-12 text-left" set:html={desc} />
+        </div>
+        <div
+          class="author-photo shrink-0"
+          style={`aspect-ratio:${maskW}/${maskH};min-height:${maskH}px;max-height:${maskH}px;${maskCss}`}
+        >
+          <img
+            src={photo}
+            alt={name}
+            style="width:100%;height:100%;object-fit:cover;"
+          />
+        </div>
+      </>
+    )
+  }
+</div>
+
+<style>
+  /* Mobile: column layout, no animation */
+  @media (max-width: 767px) {
+    [data-author-index] {
+      flex-direction: column !important;
+      align-items: center !important;
+    }
+    .author-photo {
+      min-height: 0 !important;
+      max-height: 240px !important;
+      width: 60% !important;
+      flex-shrink: 1 !important;
+      transform: none !important;
+      margin-bottom: 1.25rem;
+    }
+    .author-text {
+      width: 100% !important;
+      transform: none !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+    .author-text p[class*="text-right"] {
+      text-align: left !important;
+    }
+  }
+</style>
