@@ -27,7 +27,7 @@ const authors = [
     maskH: 520,
     name: "Alicja Pawluk-Chocholska",
     title: "Wiceprezeska Fundacji Działo Sztuki",
-    gapClass: "pr-3.5",
+    gapClass: "pl-8 pr-3.5",
     desc: "Słowa klucz o mnie: pedagożka, arteterapeutka, artystka i siostra. W 2023 roku ukończyłam Edukację artystyczną w zakresie sztuk plastycznych oraz arteterapię w Instytucie Edukacji Artystycznej na Akademii Pedagogiki Specjalnej w Warszawie. Dyplomy zrealizowałam w pracowni grafiki warsztatowej, opowiadając o moich osobistych doświadczeniach jako kobiety, córki i siostry. W sztuce najbardziej interesuje mnie jej terapeutyczna moc, dlatego tworzę programy, w których staje się ona narzędziem do odkrywania siebie i sposobem komunikacji z sobą oraz ze światem. Jako terapeutka pracowałam w warsztatach terapii zajęciowej oraz w szpitalach na oddziałach psychiatrycznych, wspierając osoby z niepełnosprawnością intelektualną i osoby w kryzysie psychicznym. Od 2021 roku uczę rysunku i prowadzę zajęcia dla uczniów szkoły podstawowej, a od 2023 roku mam pod opieką zespół nauczycieli, z którymi pracuje rozwojowo. W swoich działaniach kieruję się uważnością, ciekawością i autentycznym zainteresowaniem drugim człowiekiem.",
   },
   {
@@ -45,7 +45,7 @@ const authors = [
     maskW: 551,
     maskH: 552,
     name: "Katarzyna Zaremba",
-    gapClass: "pr-3",
+    gapClass: "pl-8 pr-3",
     desc: `A ja, krążę między tworzeniem a pokazywaniem - odnajduję się w obu tych przestrzeniach równie naturalnie. Pracuję solo, ale też w dwójkach, w trójkach, piątkach i dziesiątkach - lubię zmieniać perspektywę i dynamikę działania.<br><br>Tworzę na styku malarstwa i fotografii, łącząc je intuicyjnie i bez sztywnych podziałów. Interesują mnie napięcia, błędy i momenty, które wymykają się jednoznacznej interpretacji. Wychodzę od codzienności, rzeczy pozornie zwykłych. Prowadzę warsztaty i projekty, współtworzę wystawy — działam zarówno od strony koncepcji, jak i realizacji. Doceniam proces, wymianę i sytuacje, w których bardziej od dzieła liczy się działanie.<br><br>Ukończyłam malarstwo na Akademii Sztuk Pięknych w Łodzi.`,
   },
 ];
@@ -55,9 +55,35 @@ const authors = [
   <section id="authors-section" class="py-12 md:py-24 w-full px-5 md:px-24">
     <div class="flex flex-col items-center w-full max-w-350 mx-auto gap-y-10 md:gap-y-16">
       {
-        authors.map((author, i) => (
-          <AuthorCard {...author} index={i} />
-        ))
+        (() => {
+          const borderProps = [
+            { borderColor: "#F7CB1B" },
+            {
+              borderColor: "#F7ADC5",
+              borderTop: "-100vh",
+              borderLeft: "0",
+              borderRight: "-32px",
+              borderSides: "left-bottom" as const,
+            },
+            {
+              borderColor: "#816786",
+              borderTop: "-100vh",
+              borderRight: "-32px",
+              borderSides: "right-bottom" as const,
+              leftStubPx: 40,
+            },
+            {
+              borderColor: "#00938A",
+              borderTop: "-4rem",
+              borderLeft: "0",
+              borderRight: "-32px",
+              borderSides: "no-top" as const,
+            },
+          ];
+          return authors.map((author, i) => (
+            <AuthorCard {...author} {...borderProps[i]} index={i} />
+          ));
+        })()
       }
     </div>
   </section>
@@ -92,14 +118,17 @@ const authors = [
       const photoLeft = i % 2 === 0;
       const photo = row.querySelector<HTMLElement>(".author-photo")!;
       const text = row.querySelector<HTMLElement>(".author-text")!;
+      const bordersEls = Array.from(row.querySelectorAll<HTMLElement>(".author-border"));
       const photoDir = photoLeft ? -1 : 1;
       const textDir = photoLeft ? 1 : -1;
       photo.style.transform = `translateX(${photoDir * OFFSET}px)`;
       text.style.transform = `translateX(${textDir * OFFSET}px)`;
+      for (const b of bordersEls) b.style.transform = `translateX(${textDir * OFFSET}px)`;
       return {
         row,
         photo,
         text,
+        bordersEls,
         photoDir,
         textDir,
         photoX: photoDir * OFFSET,
@@ -121,6 +150,7 @@ const authors = [
         s.textX = lerp(s.textX, targetText, LAG);
         s.photo.style.transform = `translateX(${s.photoX}px)`;
         s.text.style.transform = `translateX(${s.textX}px)`;
+        for (const b of s.bordersEls) b.style.transform = `translateX(${s.textX}px)`;
 
         if (
           Math.abs(s.photoX - targetPhoto) > SETTLE ||

@@ -9,19 +9,48 @@ interface Props {
   gapClass: string;
   desc: string;
   index: number;
+  borderColor?: string;
+  borderTop?: string;
+  borderRight?: string;
+  borderLeft?: string;
+  borderSides?: "all" | "left-bottom" | "right-bottom" | "no-top";
+  leftStubPx?: number;
 }
 
-const { photo, mask, maskW, maskH, name, title, gapClass, desc, index } =
-  Astro.props;
+const {
+  photo, mask, maskW, maskH, name, title, gapClass, desc, index,
+  borderColor, borderTop, borderRight, borderLeft, borderSides, leftStubPx,
+} = Astro.props;
 
 const photoLeft = index % 2 === 0;
 const maskCss = `mask-image:url(${mask});mask-size:contain;mask-repeat:no-repeat;mask-position:top center;-webkit-mask-image:url(${mask});-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;-webkit-mask-position:top center;`;
+
+const bLeft  = borderLeft  ?? (photoLeft ? `${Math.round(maskW * 0.45)}px` : "0");
+const bRight = borderRight ?? (photoLeft ? "0" : `${Math.round(maskW * 0.45)}px`);
+const bTop   = borderTop   ?? "0";
+const bLineCss =
+  borderSides === "left-bottom"  ? `border-left:1.5px solid ${borderColor};border-bottom:1.5px solid ${borderColor};` :
+  borderSides === "right-bottom" ? `border-right:1.5px solid ${borderColor};border-bottom:1.5px solid ${borderColor};` :
+  borderSides === "no-top"       ? `border-left:1.5px solid ${borderColor};border-right:1.5px solid ${borderColor};border-bottom:1.5px solid ${borderColor};` :
+                                   `border:1.5px solid ${borderColor};`;
 ---
 
 <div
-  class="flex flex-row items-stretch w-full"
+  class="relative flex flex-row items-stretch w-full"
   data-author-index={index}
 >
+  {borderColor && (
+    <div
+      class="author-border absolute pointer-events-none hidden md:block"
+      style={`${bLineCss}left:${bLeft};right:${bRight};top:${bTop};bottom:0;`}
+    />
+  )}
+  {borderColor && leftStubPx && (
+    <div
+      class="author-border absolute pointer-events-none hidden md:block"
+      style={`border-left:1.5px solid ${borderColor};left:${bLeft};bottom:0;height:${leftStubPx}px;width:0;`}
+    />
+  )}
   {
     photoLeft ? (
       <>
