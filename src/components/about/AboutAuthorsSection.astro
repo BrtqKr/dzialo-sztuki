@@ -7,6 +7,7 @@ import mask1 from "../../assets/about/authors/mask1.svg";
 import mask2 from "../../assets/about/authors/mask2.svg";
 import mask3 from "../../assets/about/authors/mask3.svg";
 import mask4 from "../../assets/about/authors/mask4.svg";
+import AuthorCard from "./AuthorCard.astro";
 
 const authors = [
   {
@@ -16,7 +17,7 @@ const authors = [
     maskH: 552,
     name: "Dominika Gruszczyńska",
     title: "Prezeska Fundacji Działo Sztuki",
-    gapClass: "pl-16",
+    gapClass: "pl-16 pt-8 pr-8",
     desc: "Z wykształcenia jestem magistrą kierunku Art & Design na UKEN. Zarówno moja praca licencjacka, jak i magisterska były projektami gier komputerowych, oraz ilustrowanych książek dla dzieci. Ukończyłam również Liceum Plastyczne im. Szermentowskiego na kierunku tradycyjnych technik malarskich i pozłotniczych. Na co dzień pracuję jako metodyk i nauczyciel - lubię wspierać innych w rozwoju i tworzyć przestrzeń, w której każdy może czuć się swobodnie. Mam doświadczenie w pracy z ludźmi w różnym wieku :o). Prywatnie jestem gamerem, który uwielbia filmy, seriale, kolekcjonowanie różnych pierdół i rysowanie. Mam również 9-letniego mopsa o imieniu Donatello, który jest dla mnie całym światem! :o) Moją życiową misją jest sprawienie, aby ludzie czuli się wyjątkowi, zauważeni i zaopiekowani.",
   },
   {
@@ -26,7 +27,7 @@ const authors = [
     maskH: 520,
     name: "Alicja Pawluk-Chocholska",
     title: "Wiceprezeska Fundacji Działo Sztuki",
-    gapClass: "pr-3.5",
+    gapClass: "pl-8 pr-3.5 pb-8",
     desc: "Słowa klucz o mnie: pedagożka, arteterapeutka, artystka i siostra. W 2023 roku ukończyłam Edukację artystyczną w zakresie sztuk plastycznych oraz arteterapię w Instytucie Edukacji Artystycznej na Akademii Pedagogiki Specjalnej w Warszawie. Dyplomy zrealizowałam w pracowni grafiki warsztatowej, opowiadając o moich osobistych doświadczeniach jako kobiety, córki i siostry. W sztuce najbardziej interesuje mnie jej terapeutyczna moc, dlatego tworzę programy, w których staje się ona narzędziem do odkrywania siebie i sposobem komunikacji z sobą oraz ze światem. Jako terapeutka pracowałam w warsztatach terapii zajęciowej oraz w szpitalach na oddziałach psychiatrycznych, wspierając osoby z niepełnosprawnością intelektualną i osoby w kryzysie psychicznym. Od 2021 roku uczę rysunku i prowadzę zajęcia dla uczniów szkoły podstawowej, a od 2023 roku mam pod opieką zespół nauczycieli, z którymi pracuje rozwojowo. W swoich działaniach kieruję się uważnością, ciekawością i autentycznym zainteresowaniem drugim człowiekiem.",
   },
   {
@@ -42,9 +43,9 @@ const authors = [
     photo: author4.src,
     mask: mask4.src,
     maskW: 551,
-    maskH: 552,
+    maskH: 620,
     name: "Katarzyna Zaremba",
-    gapClass: "pr-3",
+    gapClass: "pl-10 pr-0",
     desc: `A ja, krążę między tworzeniem a pokazywaniem - odnajduję się w obu tych przestrzeniach równie naturalnie. Pracuję solo, ale też w dwójkach, w trójkach, piątkach i dziesiątkach - lubię zmieniać perspektywę i dynamikę działania.<br><br>Tworzę na styku malarstwa i fotografii, łącząc je intuicyjnie i bez sztywnych podziałów. Interesują mnie napięcia, błędy i momenty, które wymykają się jednoznacznej interpretacji. Wychodzę od codzienności, rzeczy pozornie zwykłych. Prowadzę warsztaty i projekty, współtworzę wystawy — działam zarówno od strony koncepcji, jak i realizacji. Doceniam proces, wymianę i sytuacje, w których bardziej od dzieła liczy się działanie.<br><br>Ukończyłam malarstwo na Akademii Sztuk Pięknych w Łodzi.`,
   },
 ];
@@ -52,107 +53,44 @@ const authors = [
 
 <div style="clip-path: inset(0 -100vw -100vh 0)">
   <section id="authors-section" class="py-12 md:py-24 w-full px-5 md:px-24">
-    <div class="flex flex-col items-center w-full max-w-350 mx-auto gap-y-10 md:gap-y-16">
+    <div
+      class="flex flex-col items-center w-full max-w-350 mx-auto gap-y-10 md:gap-y-16"
+    >
       {
-        authors.map((author, i) => {
-          const photoLeft = i % 2 === 0;
-          const maskCss = `mask-image:url(${author.mask});mask-size:contain;mask-repeat:no-repeat;mask-position:top center;-webkit-mask-image:url(${author.mask});-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;-webkit-mask-position:top center;`;
-
-          return (
-            <div
-              class="flex flex-row items-stretch"
-              class="w-full"
-              data-author-index={i}
-            >
-              {photoLeft ? (
-                <>
-                  <div
-                    class="author-photo shrink-0"
-                    style={`aspect-ratio:${author.maskW}/${author.maskH};min-height:${author.maskH}px;max-height:${author.maskH}px;${maskCss}`}
-                  >
-                    <img
-                      src={author.photo}
-                      alt={author.name}
-                      style="width:100%;height:100%;object-fit:cover;object-position:right center;"
-                    />
-                  </div>
-                  <div
-                    class={`author-text font-[Michroma] ${author.gapClass} flex-1 max-w-2xl`}
-                  >
-                    <p class="text-2xl leading-tight">{author.name}</p>
-                    {author.title && (
-                      <p class="text-base text-black mt-2">{author.title}</p>
-                    )}
-                    <p
-                      class="text-[14px] leading-7 mt-12 text-left"
-                      set:html={author.desc}
-                    />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div
-                    class={`author-text font-[Michroma] ${author.gapClass} flex-1 max-w-2xl`}
-                  >
-                    <p class="text-2xl leading-tight text-right">
-                      {author.name}
-                    </p>
-                    {author.title && (
-                      <p class="text-base text-black mt-2 text-right">
-                        {author.title}
-                      </p>
-                    )}
-                    <p
-                      class="text-[14px] leading-7 mt-12 text-left"
-                      set:html={author.desc}
-                    />
-                  </div>
-                  <div
-                    class="author-photo shrink-0"
-                    style={`aspect-ratio:${author.maskW}/${author.maskH};min-height:${author.maskH}px;max-height:${author.maskH}px;${maskCss}`}
-                  >
-                    <img
-                      src={author.photo}
-                      alt={author.name}
-                      style="width:100%;height:100%;object-fit:cover;"
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-          );
-        })
+        (() => {
+          const borderProps = [
+            { borderColor: "#F7CB1B" },
+            {
+              borderColor: "#F7ADC5",
+              borderTop: "-100vh",
+              borderLeft: "0",
+              borderRight: "-32px",
+              borderSides: "left-bottom" as const,
+            },
+            {
+              borderColor: "#816786",
+              borderTop: "-100vh",
+              borderRight: "-32px",
+              borderSides: "right-bottom" as const,
+              leftStubPx: 40,
+            },
+            {
+              borderColor: "#00938A",
+              borderTop: "-15rem",
+              borderLeft: "0",
+              borderRight: "-32px",
+              borderSides: "no-top" as const,
+              borderRightTop: "-4rem",
+            },
+          ];
+          return authors.map((author, i) => (
+            <AuthorCard {...author} {...borderProps[i]} index={i} />
+          ));
+        })()
       }
     </div>
   </section>
 </div>
-
-<style>
-  /* Mobile: column layout, no animation */
-  @media (max-width: 767px) {
-    [data-author-index] {
-      flex-direction: column !important;
-      align-items: center !important;
-    }
-    .author-photo {
-      min-height: 0 !important;
-      max-height: 240px !important;
-      width: 60% !important;
-      flex-shrink: 1 !important;
-      transform: none !important;
-      margin-bottom: 1.25rem;
-    }
-    .author-text {
-      width: 100% !important;
-      transform: none !important;
-      padding-left: 0 !important;
-      padding-right: 0 !important;
-    }
-    .author-text p[class*="text-right"] {
-      text-align: left !important;
-    }
-  }
-</style>
 
 <script>
   function lerp(a: number, b: number, t: number) {
@@ -183,14 +121,20 @@ const authors = [
       const photoLeft = i % 2 === 0;
       const photo = row.querySelector<HTMLElement>(".author-photo")!;
       const text = row.querySelector<HTMLElement>(".author-text")!;
+      const bordersEls = Array.from(
+        row.querySelectorAll<HTMLElement>(".author-border"),
+      );
       const photoDir = photoLeft ? -1 : 1;
       const textDir = photoLeft ? 1 : -1;
       photo.style.transform = `translateX(${photoDir * OFFSET}px)`;
       text.style.transform = `translateX(${textDir * OFFSET}px)`;
+      for (const b of bordersEls)
+        b.style.transform = `translateX(${textDir * OFFSET}px)`;
       return {
         row,
         photo,
         text,
+        bordersEls,
         photoDir,
         textDir,
         photoX: photoDir * OFFSET,
@@ -212,6 +156,8 @@ const authors = [
         s.textX = lerp(s.textX, targetText, LAG);
         s.photo.style.transform = `translateX(${s.photoX}px)`;
         s.text.style.transform = `translateX(${s.textX}px)`;
+        for (const b of s.bordersEls)
+          b.style.transform = `translateX(${s.textX}px)`;
 
         if (
           Math.abs(s.photoX - targetPhoto) > SETTLE ||

@@ -1,0 +1,150 @@
+---
+interface Props {
+  photo: string;
+  mask: string;
+  maskW: number;
+  maskH: number;
+  name: string;
+  title?: string;
+  gapClass: string;
+  desc: string;
+  index: number;
+  borderColor?: string;
+  borderTop?: string;
+  borderRight?: string;
+  borderLeft?: string;
+  borderSides?: "all" | "left-bottom" | "right-bottom" | "no-top";
+  leftStubPx?: number;
+  borderRightTop?: string;
+}
+
+const {
+  photo,
+  mask,
+  maskW,
+  maskH,
+  name,
+  title,
+  gapClass,
+  desc,
+  index,
+  borderColor,
+  borderTop,
+  borderRight,
+  borderLeft,
+  borderSides,
+  leftStubPx,
+  borderRightTop,
+} = Astro.props;
+
+const photoLeft = index % 2 === 0;
+const maskCss = `mask-image:url(${mask});mask-size:contain;mask-repeat:no-repeat;mask-position:top center;-webkit-mask-image:url(${mask});-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;-webkit-mask-position:top center;`;
+
+const bLeft = borderLeft ?? (photoLeft ? `${Math.round(maskW * 0.45)}px` : "0");
+const bRight =
+  borderRight ?? (photoLeft ? "0" : `${Math.round(maskW * 0.45)}px`);
+const bTop = borderTop ?? "0";
+const bLineCss =
+  borderSides === "left-bottom"
+    ? `border-left:1.5px solid ${borderColor};border-bottom:1.5px solid ${borderColor};`
+    : borderSides === "right-bottom"
+      ? `border-right:1.5px solid ${borderColor};border-bottom:1.5px solid ${borderColor};`
+      : borderSides === "no-top" && borderRightTop !== undefined
+        ? `border-left:1.5px solid ${borderColor};border-bottom:1.5px solid ${borderColor};`
+        : borderSides === "no-top"
+          ? `border-left:1.5px solid ${borderColor};border-right:1.5px solid ${borderColor};border-bottom:1.5px solid ${borderColor};`
+          : `border:1.5px solid ${borderColor};`;
+---
+
+<div class="relative flex flex-row" style={`z-index:${4 - index}`} data-author-index={index}>
+  {
+    borderColor && (
+      <div
+        class="author-border absolute pointer-events-none hidden md:block"
+        style={`${bLineCss}left:${bLeft};right:${bRight};top:${bTop};bottom:0;`}
+      />
+    )
+  }
+  {
+    borderColor && leftStubPx && (
+      <div
+        class="author-border absolute pointer-events-none hidden md:block"
+        style={`border-left:1.5px solid ${borderColor};left:${bLeft};bottom:0;height:${leftStubPx}px;width:0;`}
+      />
+    )
+  }
+  {
+    borderColor && borderRightTop !== undefined && (
+      <div
+        class="author-border absolute pointer-events-none hidden md:block"
+        style={`border-right:1.5px solid ${borderColor};right:${bRight};top:${borderRightTop};bottom:0;`}
+      />
+    )
+  }
+  {
+    photoLeft ? (
+      <>
+        <div
+          class="author-photo shrink-0"
+          style={`aspect-ratio:${maskW}/${maskH};min-height:${maskH}px;max-height:${maskH}px;${maskCss}`}
+        >
+          <img
+            src={photo}
+            alt={name}
+            style="width:100%;height:100%;object-fit:cover;object-position:right center;"
+          />
+        </div>
+        <div class={`author-text font-[Michroma] ${gapClass} flex-1 max-w-2xl`}>
+          <p class="text-2xl leading-tight">{name}</p>
+          {title && <p class="text-base text-black mt-2">{title}</p>}
+          <p class="text-[14px] leading-7 mt-12 text-left" set:html={desc} />
+        </div>
+      </>
+    ) : (
+      <>
+        <div class={`author-text font-[Michroma] ${gapClass} flex-1 max-w-2xl`}>
+          <p class="text-2xl leading-tight text-right">{name}</p>
+          {title && <p class="text-base text-black mt-2 text-right">{title}</p>}
+          <p class="text-[14px] leading-7 mt-12 text-left" set:html={desc} />
+        </div>
+        <div
+          class="author-photo shrink-0"
+          style={`aspect-ratio:${maskW}/${maskH};min-height:${maskH}px;max-height:${maskH}px;${maskCss}`}
+        >
+          <img
+            src={photo}
+            alt={name}
+            style="width:100%;height:100%;object-fit:cover;"
+          />
+        </div>
+      </>
+    )
+  }
+</div>
+
+<style>
+  /* Mobile: column layout, no animation */
+  @media (max-width: 767px) {
+    [data-author-index] {
+      flex-direction: column !important;
+      align-items: center !important;
+    }
+    .author-photo {
+      min-height: 0 !important;
+      max-height: 240px !important;
+      width: 60% !important;
+      flex-shrink: 1 !important;
+      transform: none !important;
+      margin-bottom: 1.25rem;
+    }
+    .author-text {
+      width: 100% !important;
+      transform: none !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+    .author-text p[class*="text-right"] {
+      text-align: left !important;
+    }
+  }
+</style>
